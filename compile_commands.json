@@ -9,29 +9,45 @@
       "-c",
       "-I./thirdparty/glad/include",
       "-o",
+      "build/main.o",
+      "src/main.c"
+    ],
+    "directory": "/home/koalayt/Projects/opengl4tut",
+    "file": "/home/koalayt/Projects/opengl4tut/src/main.c",
+    "output": "/home/koalayt/Projects/opengl4tut/build/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-g",
+      "-O2",
+      "-c",
+      "-I./thirdparty/glad/include",
+      "-o",
+      "build/tut.o",
+      "src/tut.c"
+    ],
+    "directory": "/home/koalayt/Projects/opengl4tut",
+    "file": "/home/koalayt/Projects/opengl4tut/src/tut.c",
+    "output": "/home/koalayt/Projects/opengl4tut/build/tut.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-g",
+      "-O2",
+      "-c",
+      "-I./thirdparty/glad/include",
+      "-o",
       "build/glad.o",
       "thirdparty/glad/src/gl.c"
     ],
     "directory": "/home/koalayt/Projects/opengl4tut",
     "file": "/home/koalayt/Projects/opengl4tut/thirdparty/glad/src/gl.c",
     "output": "/home/koalayt/Projects/opengl4tut/build/glad.o"
-  },
-  {
-    "arguments": [
-      "/usr/bin/gcc",
-      "-c",
-      "-Wall",
-      "-Wextra",
-      "-g",
-      "-O2",
-      "build/glad.o",
-      "-I./thirdparty/glad/include",
-      "-o",
-      "build/main",
-      "src/main.c"
-    ],
-    "directory": "/home/koalayt/Projects/opengl4tut",
-    "file": "/home/koalayt/Projects/opengl4tut/src/main.c",
-    "output": "/home/koalayt/Projects/opengl4tut/build/main"
   }
 ]

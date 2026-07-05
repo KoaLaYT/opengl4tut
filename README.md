@@ -2,5 +2,5 @@
 
 ```shell
 $ sudo apt install bear
-$ bear -- make
+$ make lsp
 ```

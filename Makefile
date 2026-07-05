@@ -1,6 +1,11 @@
 CFLAGS = -Wall -Wextra -g -O2
 LIB_GLFW = $(shell pkg-config --libs glfw3)
-INCLUDE_GLAD = -I./thirdparty/glad/include
+SOURCES = $(wildcard src/*.c)
+OBJECTS = $(patsubst src/%.c,build/%.o,$(SOURCES))
+INCLUDES = -I./thirdparty/glad/include
+
+$(info SOURCES = $(SOURCES))
+$(info OBJECTS = $(OBJECTS))
 
 .PHONY: all
 all: build/main
@@ -13,11 +18,18 @@ run: build/main
 clean:
 	rm -rf build/*
 
-build/main: src/main.c build/glad.o | build
-	gcc $(CFLAGS) -o build/main src/main.c build/glad.o $(INCLUDE_GLAD) $(LIB_GLFW)
+build/main: $(OBJECTS) build/glad.o | build
+	gcc $(CFLAGS) -o build/main $(OBJECTS) build/glad.o $(INCLUDES) $(LIB_GLFW)
 
+build/%.o: src/%.c | build
+	gcc $(CFLAGS) -c -o $@ $< $(INCLUDES)
+
+# thirdparty deps begin #################################################################
+# glad
 build/glad.o: thirdparty/glad/src/gl.c | build
-	gcc $(CFLAGS) -c -o build/glad.o thirdparty/glad/src/gl.c $(INCLUDE_GLAD)
+	gcc $(CFLAGS) -c -o build/glad.o thirdparty/glad/src/gl.c $(INCLUDES)
+
+# thirdparty deps end   #################################################################
 
 build:
 	mkdir -p build
