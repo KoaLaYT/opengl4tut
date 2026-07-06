@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include <error.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -13,22 +14,28 @@ int g_win_height = 480;
 int g_fb_width   = 640;
 int g_fb_height  = 480;
 
-static void update_fps_counter(GLFWwindow* window) {
-  static double previous_secs = 0;
+static double update_fps_counter(GLFWwindow* window) {
+  static double prev_update_sec = 0;
+  static double prev_real_sec = 0;
   static int frame_count;
 
-  double current_secs = glfwGetTime();
-  double elapsed_secs = current_secs - previous_secs;
+  double curr_sec = glfwGetTime();
+  double elapsed_real_sec = curr_sec - prev_real_sec;
+  double elapsed_update_sec = curr_sec - prev_update_sec;
+  prev_real_sec = curr_sec;
 
-  if (elapsed_secs > 0.25) {
-    previous_secs = current_secs;
+  if (elapsed_update_sec > 0.25) {
     char tmp[128];
-    double fps = (double)frame_count / elapsed_secs;
+    double fps = (double)frame_count / elapsed_update_sec;
     sprintf(tmp, "opengl @ fps: %.2f", fps);
     glfwSetWindowTitle(window, tmp);
     frame_count = 0;
+    prev_update_sec = curr_sec;
+  } else {
+    frame_count += 1;
   }
-  frame_count += 1;
+
+  return elapsed_real_sec;
 }
 
 static void glfw_error_callback(int error, const char* description) {
@@ -112,13 +119,33 @@ int main(void) {
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
   glEnableVertexAttribArray(1);
 
+  // column major
+  float matrix[] = {
+    1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f,
+  };
+
   GLuint sp = tut_compile_program("glsl/hello.vert", "glsl/hello.frag");
+  int matrix_loc = glGetUniformLocation(sp, "matrix");
+
+  float speed = 0.5f;
+  float last_position = 0.0f;
 
   while (!glfwWindowShouldClose(window)) {
-    update_fps_counter(window);
+    double elapsed_secs = update_fps_counter(window);
+
+    if (fabs(last_position) > 1.0f) {
+      speed = -speed;
+    }
+    last_position += elapsed_secs * speed;
+    matrix[12] = last_position;
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glViewport(0, 0, g_fb_width, g_fb_height);
     glUseProgram(sp);
+    glUniformMatrix4fv(matrix_loc, 1, GL_FALSE, matrix);
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glfwPollEvents();
