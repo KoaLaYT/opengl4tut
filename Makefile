@@ -1,5 +1,5 @@
-CFLAGS = -Wall -Wextra -g -O2
-LIB_GLFW = $(shell pkg-config --libs glfw3)
+CFLAGS = -Wall -Wextra -g -O2 -std=c11
+LIBS = $(shell pkg-config --libs glfw3) -lm
 SOURCES = $(wildcard src/*.c)
 OBJECTS = $(patsubst src/%.c,build/%.o,$(SOURCES))
 INCLUDES = -I./thirdparty/glad/include
@@ -19,7 +19,7 @@ clean:
 	rm -rf build/*
 
 build/main: $(OBJECTS) build/glad.o | build
-	gcc $(CFLAGS) -o build/main $(OBJECTS) build/glad.o $(INCLUDES) $(LIB_GLFW)
+	gcc $(CFLAGS) -o build/main $(OBJECTS) build/glad.o $(INCLUDES) $(LIBS)
 
 build/%.o: src/%.c | build
 	gcc $(CFLAGS) -c -o $@ $< $(INCLUDES)
