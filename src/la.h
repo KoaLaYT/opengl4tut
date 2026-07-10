@@ -1,7 +1,17 @@
 #ifndef INCLUDE_LA_H
 #define INCLUDE_LA_H
 
+#define PI 3.14159f
+#define DEG_TO_RAD(deg) (deg*PI/180.0f)
+
 // column major
+typedef union {
+  struct {
+    float x,y;
+  };
+  float a[2];
+} V2f;
+
 typedef union {
   struct {
     float x,y,z;

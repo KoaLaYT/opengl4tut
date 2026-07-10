@@ -10,97 +10,20 @@
 
 #include "la.h"
 #include "tut.h"
+#include "camera.h"
 
-#define PI 3.14159f
-#define DEG_TO_RAD(deg) (deg*PI/180.0f)
+#define MOUSE_SENSITIVITY 0.05
+#define MOVE_SPEED   6
 
 int g_win_width  = 640;
 int g_win_height = 480;
 int g_fb_width   = 640;
 int g_fb_height  = 480;
 
-static double update_fps_counter(GLFWwindow* window) {
-  static double prev_update_sec = 0;
-  static double prev_real_sec = 0;
-  static int frame_count;
-
-  double curr_sec = glfwGetTime();
-  double elapsed_real_sec = curr_sec - prev_real_sec;
-  double elapsed_update_sec = curr_sec - prev_update_sec;
-  prev_real_sec = curr_sec;
-
-  if (elapsed_update_sec > 0.25) {
-    char tmp[128];
-    double fps = (double)frame_count / elapsed_update_sec;
-    sprintf(tmp, "opengl @ fps: %.2f", fps);
-    glfwSetWindowTitle(window, tmp);
-    frame_count = 0;
-    prev_update_sec = curr_sec;
-  } else {
-    frame_count += 1;
-  }
-
-  return elapsed_real_sec;
-}
-
-static void glfw_error_callback(int error, const char* description) {
-  tut_log_err("GLFW code: %i, description: %s\n", error, description);
-}
-
-static void glfw_window_size_callback(GLFWwindow* win, int width, int height) {
-  (void)win;
-
-  g_win_width = width;
-  g_win_height = height;
-}
-
-static void glfw_framebuffer_size_callback(GLFWwindow* win, int width, int height) {
-  (void)win;
-
-  g_fb_width = width;
-  g_fb_height = height;
-}
-
-typedef struct {
-  V3f pos;
-  float yaw, pitch; // deg
-  bool need_update;
-  M4f cached_view;
-} camera;
-
-static camera camera_init(V3f at) {
-  camera c = {0};
-  c.pos = at;
-  c.need_update = true;
-  return c;
-}
-
-static M4f camera_view(camera* c) {
-  if (c->need_update) {
-    Quat yaw = quat_init(DEG_TO_RAD(c->yaw), v3f(0,1,0));
-    Quat pitch = quat_init(DEG_TO_RAD(c->pitch), v3f(1,0,0));
-    Quat q = quat_mul(yaw, pitch);
-    Quat q_inv = quat_conjugate(q);
-
-    M4f t = m4f_translate(v3f_neg(c->pos));
-    M4f r = quat_to_m4f(q_inv);
-    c->cached_view = m4f_mul(r, t);
-    c->need_update = false;
-  }
-  return c->cached_view;
-}
-
-static void camera_yaw(camera* c, float deg) {
-  c->need_update = true;
-  c->yaw += deg;
-}
-
-static void camera_pitch(camera* c, float deg) {
-  c->need_update = true;
-  c->pitch += deg;
-  if (c->pitch >  89) c->pitch =  89;
-  if (c->pitch < -89) c->pitch = -89;
-}
+static double update_fps_counter(GLFWwindow* window);
+static void glfw_error_callback(int error, const char* description);
+static void glfw_window_size_callback(GLFWwindow* win, int width, int height);
+static void glfw_framebuffer_size_callback(GLFWwindow* win, int width, int height);
 
 static M4f projection_matrix() {
   M4f m = {0};
@@ -147,17 +70,50 @@ int main(void) {
 
   glEnable(GL_DEPTH_TEST); // enable depth-testing
   glDepthFunc(GL_LESS);    // depth-testing interprets a smaller value as "closer"
-  glEnable(GL_CULL_FACE);  // cull face
-  glCullFace(GL_BACK);     // cull back face
-  glFrontFace(GL_CW);      // clock-wise
+  // glEnable(GL_CULL_FACE);  // cull face
+  // glCullFace(GL_BACK);     // cull back face
+  // glFrontFace(GL_CW);      // clock-wise
 
   GLfloat points[] = {
-       0.0f,  0.5f, 0.0f,
-       0.5f, -0.5f, 0.0f,
-      -0.5f, -0.5f, 0.0f,
+      // front
+      -1.0f,  1.0f,  1.0f,
+       1.0f,  1.0f,  1.0f,
+       1.0f, -1.0f,  1.0f,
+      -1.0f,  1.0f,  1.0f,
+       1.0f, -1.0f,  1.0f,
+      -1.0f, -1.0f,  1.0f,
+      // right
+       1.0f,  1.0f,  1.0f,
+       1.0f,  1.0f, -1.0f,
+       1.0f, -1.0f, -1.0f,
+       1.0f,  1.0f,  1.0f,
+       1.0f, -1.0f, -1.0f,
+       1.0f, -1.0f,  1.0f,
+      // left
+      -1.0f,  1.0f,  1.0f,
+      -1.0f, -1.0f, -1.0f,
+      -1.0f,  1.0f, -1.0f,
+      -1.0f,  1.0f,  1.0f,
+      -1.0f, -1.0f,  1.0f,
+      -1.0f, -1.0f, -1.0f,
   };
 
   GLfloat colors[] = {
+      1.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 0.0f,
+      0.0f, 0.0f, 1.0f,
+      1.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 0.0f,
+      0.0f, 0.0f, 1.0f,
+      1.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 0.0f,
+      0.0f, 0.0f, 1.0f,
+      1.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 0.0f,
+      0.0f, 0.0f, 1.0f,
+      1.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 0.0f,
+      0.0f, 0.0f, 1.0f,
       1.0f, 0.0f, 0.0f,
       0.0f, 1.0f, 0.0f,
       0.0f, 0.0f, 1.0f,
@@ -189,53 +145,115 @@ int main(void) {
   int view_loc       = glGetUniformLocation(sp, "view");
   int projection_loc = glGetUniformLocation(sp, "projection");
 
-  camera c = camera_init(v3f(0,0,5));
+  camera c = camera_init(v3f(0,0,10));
   float rad = 0.0f;
   float speed = 0.5f;
   V3f move = {0};
+  double last_cursor_x;
+  double last_cursor_y;
+  bool first_mouse = true;
 
   while (!glfwWindowShouldClose(window)) {
-     double elapsed_secs = update_fps_counter(window);
+    double elapsed_secs = update_fps_counter(window);
 
-     if (fabs(move.x) > 1.0f) {
-       speed = -speed;
-     }
-     rad += 2*elapsed_secs;
-     if (rad > 2*PI) rad -= 2*PI;
-     move.x += elapsed_secs * speed;
+    if (fabs(move.x) > 5.0f) {
+      speed = -speed;
+    }
+    rad += 2*elapsed_secs;
+    if (rad > 2*PI) rad -= 2*PI;
+    move.x += elapsed_secs * speed;
 
-     M4f model = m4f_mul(m4f_translate(move), m4f_rot_z(rad));
-     M4f view = camera_view(&c);
-     M4f projection = projection_matrix();
+    M4f model = m4f_mul(m4f_translate(move), m4f_rot_z(rad));
+    M4f view = camera_view(&c);
+    M4f projection = projection_matrix();
 
-     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-     glViewport(0, 0, g_fb_width, g_fb_height);
-     glUseProgram(sp);
-     glUniformMatrix4fv(model_loc, 1, GL_FALSE, model.a);
-     glUniformMatrix4fv(view_loc, 1, GL_FALSE, view.a);
-     glUniformMatrix4fv(projection_loc, 1, GL_FALSE, projection.a);
-     glBindVertexArray(vao);
-     glDrawArrays(GL_TRIANGLES, 0, 3);
-     glfwPollEvents();
-     glfwSwapBuffers(window);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glViewport(0, 0, g_fb_width, g_fb_height);
+    glUseProgram(sp);
+    glUniformMatrix4fv(model_loc, 1, GL_FALSE, model.a);
+    glUniformMatrix4fv(view_loc, 1, GL_FALSE, view.a);
+    glUniformMatrix4fv(projection_loc, 1, GL_FALSE, projection.a);
+    glBindVertexArray(vao);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(points)/3);
+    glfwPollEvents();
+    glfwSwapBuffers(window);
 
-     if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_ESCAPE)) {
-        glfwSetWindowShouldClose(window, 1);
-     }
-     if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_LEFT)) {
-        camera_yaw(&c, +1);
-     }
-     if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_RIGHT)) {
-        camera_yaw(&c, -1);
-     }
-     if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_UP)) {
-        camera_pitch(&c, +1);
-     }
-     if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_DOWN)) {
-        camera_pitch(&c, -1);
-     }
+    if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_ESCAPE)) {
+      glfwSetWindowShouldClose(window, 1);
+    }
+    if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_W)) {
+      camera_forward(&c, +MOVE_SPEED*elapsed_secs);
+    }
+    if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_S)) {
+      camera_forward(&c, -MOVE_SPEED*elapsed_secs);
+    }
+    if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_A)) {
+      camera_right(&c, -MOVE_SPEED*elapsed_secs);
+    }
+    if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_D)) {
+      camera_right(&c, +MOVE_SPEED*elapsed_secs);
+    }
+
+    double cursor_x, cursor_y;
+    glfwGetCursorPos(window, &cursor_x, &cursor_y);
+    if (first_mouse) {
+      last_cursor_x = cursor_x;
+      last_cursor_y = cursor_y;
+      first_mouse = false;
+    }
+
+    double dx = cursor_x - last_cursor_x;
+    double dy = cursor_y - last_cursor_y;
+    last_cursor_x = cursor_x;
+    last_cursor_y = cursor_y;
+    camera_yaw(&c, -dx*MOUSE_SENSITIVITY);
+    camera_pitch(&c, -dy*MOUSE_SENSITIVITY);
   }
 
   glfwTerminate();
   return 0;
+}
+
+static double update_fps_counter(GLFWwindow* window)
+{
+  static double prev_update_sec = 0;
+  static double prev_real_sec = 0;
+  static int frame_count;
+
+  double curr_sec = glfwGetTime();
+  double elapsed_real_sec = curr_sec - prev_real_sec;
+  double elapsed_update_sec = curr_sec - prev_update_sec;
+  prev_real_sec = curr_sec;
+
+  if (elapsed_update_sec > 0.25) {
+    char tmp[128];
+    double fps = (double)frame_count / elapsed_update_sec;
+    sprintf(tmp, "opengl @ fps: %.2f", fps);
+    glfwSetWindowTitle(window, tmp);
+    frame_count = 0;
+    prev_update_sec = curr_sec;
+  } else {
+    frame_count += 1;
+  }
+
+  return elapsed_real_sec;
+}
+
+static void glfw_error_callback(int error, const char* description)
+{
+  tut_log_err("GLFW code: %i, description: %s\n", error, description);
+}
+
+static void glfw_window_size_callback(GLFWwindow* win, int width, int height) {
+  (void)win;
+
+  g_win_width = width;
+  g_win_height = height;
+}
+
+static void glfw_framebuffer_size_callback(GLFWwindow* win, int width, int height) {
+  (void)win;
+
+  g_fb_width = width;
+  g_fb_height = height;
 }

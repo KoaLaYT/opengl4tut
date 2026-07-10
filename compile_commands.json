@@ -10,6 +10,24 @@
       "-c",
       "-I./thirdparty/glad/include",
       "-o",
+      "build/camera.o",
+      "src/camera.c"
+    ],
+    "directory": "/home/koalayt/Projects/opengl4tut",
+    "file": "/home/koalayt/Projects/opengl4tut/src/camera.c",
+    "output": "/home/koalayt/Projects/opengl4tut/build/camera.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-g",
+      "-O2",
+      "-std=c11",
+      "-c",
+      "-I./thirdparty/glad/include",
+      "-o",
       "build/la.o",
       "src/la.c"
     ],
