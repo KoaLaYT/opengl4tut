@@ -5,12 +5,14 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <sys/stat.h>
 
 #include "la.h"
 #include "tut.h"
 
-#define PI 3.14159
+#define PI 3.14159f
+#define DEG_TO_RAD(deg) (deg*PI/180.0f)
 
 int g_win_width  = 640;
 int g_win_height = 480;
@@ -61,25 +63,50 @@ static void glfw_framebuffer_size_callback(GLFWwindow* win, int width, int heigh
 
 typedef struct {
   V3f pos;
-  float yaw;
-} dumb_camera;
+  float yaw, pitch; // deg
+  bool need_update;
+  M4f cached_view;
+} camera;
 
-static dumb_camera dumb_camera_init(V3f at) {
-  dumb_camera c = { .pos = at, .yaw = 0 };
+static camera camera_init(V3f at) {
+  camera c = {0};
+  c.pos = at;
+  c.need_update = true;
   return c;
 }
 
-static M4f dumb_camera_view(dumb_camera c) {
-  M4f t = m4f_translate(v3f_neg(c.pos));
-  M4f r = m4f_rot_y(-c.yaw);
-  return m4f_mul(r, t);
+static M4f camera_view(camera* c) {
+  if (c->need_update) {
+    Quat yaw = quat_init(DEG_TO_RAD(c->yaw), v3f(0,1,0));
+    Quat pitch = quat_init(DEG_TO_RAD(c->pitch), v3f(1,0,0));
+    Quat q = quat_mul(yaw, pitch);
+    Quat q_inv = quat_conjugate(q);
+
+    M4f t = m4f_translate(v3f_neg(c->pos));
+    M4f r = quat_to_m4f(q_inv);
+    c->cached_view = m4f_mul(r, t);
+    c->need_update = false;
+  }
+  return c->cached_view;
+}
+
+static void camera_yaw(camera* c, float deg) {
+  c->need_update = true;
+  c->yaw += deg;
+}
+
+static void camera_pitch(camera* c, float deg) {
+  c->need_update = true;
+  c->pitch += deg;
+  if (c->pitch >  89) c->pitch =  89;
+  if (c->pitch < -89) c->pitch = -89;
 }
 
 static M4f projection_matrix() {
   M4f m = {0};
   float near = 0.1f;
   float far = 100.0f;
-  float fov = PI*66.0f/180.0f;
+  float fov = DEG_TO_RAD(66);
   float aspect = (float)g_fb_width / (float)g_fb_height;
   float range = tan(fov/2) * near;
   float sx = near / (range*aspect);
@@ -158,9 +185,11 @@ int main(void) {
 
 
   GLuint sp = tut_compile_program("glsl/hello.vert", "glsl/hello.frag");
-  int transform_mat4_loc = glGetUniformLocation(sp, "transform_mat4");
+  int model_loc      = glGetUniformLocation(sp, "model");
+  int view_loc       = glGetUniformLocation(sp, "view");
+  int projection_loc = glGetUniformLocation(sp, "projection");
 
-  dumb_camera c = dumb_camera_init(v3f(0,0,5));
+  camera c = camera_init(v3f(0,0,5));
   float rad = 0.0f;
   float speed = 0.5f;
   V3f move = {0};
@@ -175,14 +204,16 @@ int main(void) {
      if (rad > 2*PI) rad -= 2*PI;
      move.x += elapsed_secs * speed;
 
-     M4f view = dumb_camera_view(c);
      M4f model = m4f_mul(m4f_translate(move), m4f_rot_z(rad));
-     M4f transform = m4f_mul(projection_matrix(), m4f_mul(view, model));
+     M4f view = camera_view(&c);
+     M4f projection = projection_matrix();
 
      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
      glViewport(0, 0, g_fb_width, g_fb_height);
      glUseProgram(sp);
-     glUniformMatrix4fv(transform_mat4_loc, 1, GL_FALSE, transform.a);
+     glUniformMatrix4fv(model_loc, 1, GL_FALSE, model.a);
+     glUniformMatrix4fv(view_loc, 1, GL_FALSE, view.a);
+     glUniformMatrix4fv(projection_loc, 1, GL_FALSE, projection.a);
      glBindVertexArray(vao);
      glDrawArrays(GL_TRIANGLES, 0, 3);
      glfwPollEvents();
@@ -192,10 +223,16 @@ int main(void) {
         glfwSetWindowShouldClose(window, 1);
      }
      if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_LEFT)) {
-        c.yaw -=1.0f*PI/180.0f;
+        camera_yaw(&c, +1);
      }
      if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_RIGHT)) {
-        c.yaw +=1.0f*PI/180.0f;
+        camera_yaw(&c, -1);
+     }
+     if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_UP)) {
+        camera_pitch(&c, +1);
+     }
+     if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_DOWN)) {
+        camera_pitch(&c, -1);
      }
   }
 

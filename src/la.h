@@ -19,6 +19,13 @@ typedef union {
   float a[16];
 } M4f;
 
+typedef union {
+  struct {
+    float q0,q1,q2,q3;
+  };
+  float a[4];
+} Quat;
+
 V3f v3f(float x, float y, float z);
 V3f v3f_neg(V3f v);
 
@@ -27,5 +34,11 @@ M4f m4f_mul(M4f a, M4f b);
 M4f m4f_translate(V3f v);
 M4f m4f_rot_y(float rad);
 M4f m4f_rot_z(float rad);
+
+Quat quat_init(float rad, V3f axis);
+Quat quat_normalize(Quat q);
+Quat quat_conjugate(Quat q);
+Quat quat_mul(Quat a, Quat b);
+M4f quat_to_m4f(Quat q);
 
 #endif // INCLUDE_LA_H

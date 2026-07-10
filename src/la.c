@@ -84,3 +84,71 @@ M4f m4f_rot_z(float rad) {
 
   return m;
 }
+
+Quat quat_init(float rad, V3f axis) {
+  float half_rad = rad / 2.0;
+  float s = sin(half_rad);
+  float q0 = cos(half_rad);
+  float q1 = s * axis.x;
+  float q2 = s * axis.y;
+  float q3 = s * axis.z;
+  Quat q = {.q0 = q0, .q1 = q1, .q2 = q2, .q3 = q3};
+  return q;
+}
+
+Quat quat_normalize(Quat q) {
+  float r2 = q.q0*q.q0 + q.q1*q.q1 + q.q2*q.q2 + q.q3*q.q3;
+  if (fabs(r2 - 1.0) >= 0.0001) {
+    r2 = sqrt(r2);
+    q.q0 /= r2;
+    q.q1 /= r2;
+    q.q2 /= r2;
+    q.q3 /= r2;
+  }
+  return q;
+}
+
+Quat quat_conjugate(Quat q) {
+  return (Quat){.q0 = q.q0, .q1 = -q.q1, .q2 = -q.q2, .q3 = -q.q3};
+}
+
+Quat quat_mul(Quat a, Quat b) {
+  Quat q = {0};
+  q.q0 = b.q0*a.q0 - b.q1*a.q1 - b.q2*a.q2 - b.q3*a.q3;
+  q.q1 = b.q0*a.q1 + b.q1*a.q0 - b.q2*a.q3 + b.q3*a.q2;
+  q.q2 = b.q0*a.q2 + b.q1*a.q3 + b.q2*a.q0 - b.q3*a.q1;
+  q.q3 = b.q0*a.q3 - b.q1*a.q2 + b.q2*a.q1 + b.q3*a.q0;
+  return q;
+}
+
+M4f quat_to_m4f(Quat q) {
+  q = quat_normalize(q);
+
+  M4f m = {0};
+  float w = q.q0;
+  float x = q.q1;
+  float y = q.q2;
+  float z = q.q3;
+
+  m._11 = 1 - 2*y*y - 2*z*z;
+  m._12 = 2*x*y + 2*w*z;
+  m._13 = 2*x*z - 2*w*y;
+  m._14 = 0;
+
+  m._21 = 2*x*y - 2*w*z;
+  m._22 = 1 - 2*x*x - 2*z*z;
+  m._23 = 2*y*z + 2*w*x;
+  m._24 = 0;
+
+  m._31 = 2*x*z + 2*w*y;
+  m._32 = 2*y*z - 2*w*x;
+  m._33 = 1 - 2*x*x - 2*y*y;
+  m._34 = 0;
+
+  m._41 = 0;
+  m._42 = 0;
+  m._43 = 0;
+  m._44 = 1;
+
+  return m;
+}
