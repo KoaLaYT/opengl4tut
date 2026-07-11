@@ -41,7 +41,8 @@ V3f v3f_neg(V3f v);
 
 M4f m4f_id();
 M4f m4f_mul(M4f a, M4f b);
-M4f m4f_translate(V3f v);
+M4f m4f_translate(M4f m, V3f v);
+M4f m4f_scale(M4f m, float s);
 M4f m4f_rot_y(float rad);
 M4f m4f_rot_z(float rad);
 

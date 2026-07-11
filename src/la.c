@@ -49,12 +49,20 @@ M4f m4f_mul(M4f a, M4f b) {
   return m;
 }
 
-M4f m4f_translate(V3f v) {
-  M4f m = m4f_id();
-  m._41 = v.x;
-  m._42 = v.y;
-  m._43 = v.z;
-  return m;
+M4f m4f_translate(M4f m, V3f v) {
+  M4f t = m4f_id();
+  t._41 = v.x;
+  t._42 = v.y;
+  t._43 = v.z;
+  return m4f_mul(m, t);
+}
+
+M4f m4f_scale(M4f m, float v) {
+  M4f s = m4f_id();
+  s._11 = v;
+  s._22 = v;
+  s._33 = v;
+  return m4f_mul(m, s);
 }
 
 M4f m4f_rot_y(float rad) {

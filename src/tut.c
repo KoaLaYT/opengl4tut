@@ -1,58 +1,12 @@
-// clang-format off
-#include <glad/gl.h>
-#include <GLFW/glfw3.h>
-// clang-format on
 #include "tut.h"
+#include <glad/gl.h>
 #include <errno.h>
 #include <error.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <sys/stat.h>
 #include <time.h>
 
 #define GL_LOG_FILE "/tmp/opengl4tut.log"
-#define SHADER_LOG_SIZE 2048
-
-const char* tut_read_entire_file(const char* path) {
-  FILE* f = NULL;
-  char* buf = NULL;
-
-  struct stat s;
-  if (stat(path, &s) != 0) {
-    goto on_error;
-  }
-  size_t size = sizeof(char) * s.st_size + 1;
-
-  f = fopen(path, "rb");
-  if (f == NULL) {
-    goto on_error;
-  }
-
-  buf = (char*)malloc(size);
-  if (buf == NULL) {
-    goto on_error;
-  }
-
-  size_t n = fread(buf, sizeof(char), size - 1, f);
-  if (n != size - 1) {
-    goto on_error;
-  }
-
-  buf[size - 1] = '\0';
-  fclose(f);
-  return buf;
-
-on_error:
-  if (f) {
-    fclose(f);
-  }
-  if (buf) {
-    free(buf);
-  }
-  error(1, errno, "read_entire_file(%s)", path);
-  return NULL;
-}
 
 void tut_restart_log() {
   FILE* f = fopen(GL_LOG_FILE, "w");
@@ -72,6 +26,7 @@ void tut_log_debug(const char* msg, ...) {
   va_start(ap, msg);
   vfprintf(stdout, msg, ap);
   va_end(ap);
+  fflush(stdout);
 }
 
 void tut_log_info(const char* msg, ...) {
@@ -85,7 +40,6 @@ void tut_log_info(const char* msg, ...) {
   va_start(ap, msg);
   vfprintf(f, msg, ap);
   va_end(ap);
-
   fclose(f);
 }
 
@@ -100,13 +54,13 @@ void tut_log_err(const char* msg, ...) {
   va_start(ap, msg);
   vfprintf(f, msg, ap);
   va_end(ap);
+  fclose(f);
 
   fprintf(stderr, "[ERROR] ");
   va_start(ap, msg);
   vfprintf(stderr, msg, ap);
   va_end(ap);
-
-  fclose(f);
+  fflush(stderr);
 }
 
 void tut_log_glparams() {
@@ -157,53 +111,4 @@ void tut_log_glparams() {
   glGetBooleanv(params[11], &s);
   tut_log_info("%s %u\n", names[11], (unsigned int)s);
   tut_log_info("-----------------------------\n");
-}
-
-GLuint tut_compile_program(const char* vs_path, const char* fs_path) {
-  int len = 0;
-  char log[SHADER_LOG_SIZE];
-
-  const char* vertex_shader = tut_read_entire_file(vs_path);
-  GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vs, 1, &vertex_shader, NULL);
-  glCompileShader(vs);
-  free((void*)vertex_shader);
-
-  int params = -1;
-  glGetShaderiv(vs, GL_COMPILE_STATUS, &params);
-  if (GL_TRUE != params) {
-    tut_log_err("GL shader index %i did not compile\n", vs);
-    glGetShaderInfoLog(vs, SHADER_LOG_SIZE, &len, log);
-    tut_log_debug("Shader info log for GL index %u: %.*s\n", vs, len, log);
-    exit(1);
-  }
-
-  const char* fragment_shader = tut_read_entire_file(fs_path);
-  GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fs, 1, &fragment_shader, NULL);
-  glCompileShader(fs);
-  free((void*)fragment_shader);
-
-  glGetShaderiv(fs, GL_COMPILE_STATUS, &params);
-  if (GL_TRUE != params) {
-    tut_log_err("GL shader index %i did not compile\n", fs);
-    glGetShaderInfoLog(fs, SHADER_LOG_SIZE, &len, log);
-    tut_log_debug("Shader info log for GL index %u: %.*s\n", fs, len, log);
-    exit(1);
-  }
-
-  GLuint sp = glCreateProgram();
-  glAttachShader(sp, vs);
-  glAttachShader(sp, fs);
-  glLinkProgram(sp);
-
-  glGetProgramiv(sp, GL_LINK_STATUS, &params);
-  if (GL_TRUE != params) {
-    tut_log_err("could not link shader program %i\n", sp);
-    glGetProgramInfoLog(sp, SHADER_LOG_SIZE, &len, log);
-    tut_log_debug("Program info log for GL index %u: %.*s\n", sp, len, log);
-    exit(1);
-  }
-
-  return sp;
 }
