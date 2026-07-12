@@ -2,10 +2,12 @@
 
 layout(location = 0) in vec3 vertex_position;
 layout(location = 1) in vec3 vertex_normal;
+layout(location = 2) in vec2 texture_coords;
 
 out vec3 frag_view_normal;
 out vec3 frag_view_position;
 out vec3 light_view_position;
+out vec2 tex_coords;
 
 uniform vec3 light_position;
 uniform mat4 model;
@@ -17,4 +19,5 @@ void main() {
   frag_view_normal = mat3(transpose(inverse(view * model))) * vertex_normal;
   frag_view_position = vec3(view * model * vec4(vertex_position, 1.0));
   light_view_position = vec3(view * vec4(light_position, 1.0));
+  tex_coords = texture_coords;
 }

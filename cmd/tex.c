@@ -1,12 +1,8 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
+#include <stb_image.h>
 
-#include <error.h>
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <sys/stat.h>
 
 #include "tut.h"
 #include "la.h"
@@ -34,7 +30,7 @@ static void process_keypress(GLFWwindow* win, float elapsed_secs);
 static void glfw_cursor_pos_callback(GLFWwindow* window, double xpos, double ypos);
 static void glfw_mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
-int main(void) {
+int main() {
   tut_restart_log();
 
   tut_log_info("starting GLFW %s\n", glfwGetVersionString());
@@ -66,130 +62,51 @@ int main(void) {
   // glCullFace(GL_BACK);     // cull back face
   // glFrontFace(GL_CW);      // clock-wise
 
-  GLfloat vertices[] = {
-    // positions          // normals           // texture coords
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+  Texture tex = texture_init("asset/smile.png");
 
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
+  GLfloat data[] = {
+    // vertice x, y  texture s, t
+      -1.0f,  1.0f,   0.0f, 1.0f,
+      -1.0f, -1.0f,   0.0f, 0.0f,
+       1.0f, -1.0f,   1.0f, 0.0f,
+       1.0f, -1.0f,   1.0f, 0.0f,
+       1.0f,  1.0f,   1.0f, 1.0f,
+      -1.0f,  1.0f,   0.0f, 1.0f,
   };
 
   GLuint vbo = 0;
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
 
-  GLuint cube_vao = 0;
-  glGenVertexArrays(1, &cube_vao);
-  glBindVertexArray(cube_vao);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), NULL);
+  GLuint vao = 0;
+  glGenVertexArrays(1, &vao);
+  glBindVertexArray(vao);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), NULL);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(3*sizeof(float)));
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)(2*sizeof(float)));
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(6*sizeof(float)));
-  glEnableVertexAttribArray(2);
 
-  GLuint light_vao = 0;
-  glGenVertexArrays(1, &light_vao);
-  glBindVertexArray(light_vao);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), NULL);
-  glEnableVertexAttribArray(0);
+  Shader shader  = shader_init("glsl/texture.vert", "glsl/texture.frag");
 
-  Texture diffuse_tex = texture_init("asset/container.png");
-  Texture spcular_tex = texture_init("asset/container_specular.png");
-  Shader cube_shader  = shader_init("glsl/cube.vert", "glsl/cube.frag");
-  Shader light_shader = shader_init("glsl/light.vert", "glsl/light.frag");
-
-  V3f light_color = v3f(1.0,1.0,1.0);
-  V3f diffuse_color = v3f(light_color.x*0.5,light_color.y*0.5,light_color.z*0.5);
-  V3f ambient_color = v3f(light_color.x*0.1,light_color.y*0.1,light_color.z*0.1);
-  shader_use(cube_shader);
-  shader_set_v3f(cube_shader, "light.ambient", ambient_color);
-  shader_set_v3f(cube_shader, "light.diffuse", diffuse_color);
-  shader_set_v3f(cube_shader, "light.specular", v3f(1.0,1.0,1.0));
-  shader_set_int(cube_shader, "material.diffuse", 0);
-  shader_set_int(cube_shader, "material.specular", 1);
-  shader_set_float(cube_shader, "material.shininess", 32.0f);
-
-  V3f light_pos = v3f(1.2,1.0,2.0);
-  g_camera = camera_init(v3f(0,0,10));
-  float rad = 0.0f;
+  g_camera = camera_init(v3f(0,0,4));
 
   while (!glfwWindowShouldClose(window)) {
     double elapsed_secs = update_fps_counter(window);
-
-    rad = 30*DEG_TO_RAD(elapsed_secs);
-    light_pos = m3f_mul_vec(m3f_rot_y(rad), light_pos);
 
     process_keypress(window, elapsed_secs);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     M4f view = camera_view(&g_camera);
-    {
-      shader_use(cube_shader);
-      M4f model = m4f_id();
-      shader_set_v3f(cube_shader, "light_position", light_pos);
-      shader_set_m4f(cube_shader, "model", model);
-      shader_set_m4f(cube_shader, "view", view);
-      shader_set_m4f(cube_shader, "projection", g_projection);
-      glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D, diffuse_tex.id);
-      glActiveTexture(GL_TEXTURE0+1);
-      glBindTexture(GL_TEXTURE_2D, spcular_tex.id);
-      glBindVertexArray(cube_vao);
-      glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
-    {
-      shader_use(light_shader);
-      M4f model = m4f_id();
-      model = m4f_translate(model, light_pos);
-      model = m4f_scale(model, 0.2);
-      shader_set_v3f(light_shader, "light_color", light_color);
-      shader_set_m4f(light_shader, "model", model);
-      shader_set_m4f(light_shader, "view", view);
-      shader_set_m4f(light_shader, "projection", g_projection);
-      glBindVertexArray(light_vao);
-      glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
+    shader_use(shader);
+    M4f model = m4f_id();
+    shader_set_m4f(shader, "model", model);
+    shader_set_m4f(shader, "view", view);
+    shader_set_m4f(shader, "projection", g_projection);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex.id);
+    glBindVertexArray(vao);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 
     glfwPollEvents();
     glfwSwapBuffers(window);
