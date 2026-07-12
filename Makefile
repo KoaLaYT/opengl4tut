@@ -1,15 +1,15 @@
 CFLAGS = -Wall -Wextra -g -O2 -std=c11
-LIBS = $(shell pkg-config --libs glfw3) -lm
+LIBS = $(shell pkg-config --libs glfw3) -lm -Wl,-rpath,'$$ORIGIN' -L./thirdparty/assimp -lassimp
 SOURCES = $(wildcard src/*.c)
 OBJECTS = $(patsubst src/%.c,build/obj/%.o,$(SOURCES))
 THIRDPARTIES = build/obj/glad.o build/obj/stb_image.o
-INCLUDES = -I./src -I./thirdparty/glad/include -I./thirdparty/stb
+INCLUDES = -I./src -I./thirdparty/glad/include -I./thirdparty/stb -I./thirdparty/assimp/include
 
 $(info SOURCES = $(SOURCES))
 $(info OBJECTS = $(OBJECTS))
 
 .PHONY: all
-all: build/main build/tex
+all: build/main build/tex build/model
 
 .PHONY: run/main
 run/main: build/main
@@ -19,6 +19,10 @@ run/main: build/main
 run/tex: build/tex
 	./build/tex
 
+.PHONY: run/model
+run/model: build/model
+	./build/model
+
 .PHONY: clean
 clean:
 	rm -rf build/*
@@ -27,6 +31,9 @@ build/main: cmd/main.c $(OBJECTS) $(THIRDPARTIES) | prepare
 	gcc $(CFLAGS) -o $@ $^ $(INCLUDES) $(LIBS)
 
 build/tex: cmd/tex.c $(OBJECTS) $(THIRDPARTIES) | prepare
+	gcc $(CFLAGS) -o $@ $^ $(INCLUDES) $(LIBS)
+
+build/model: cmd/model.c $(OBJECTS) $(THIRDPARTIES) | prepare
 	gcc $(CFLAGS) -o $@ $^ $(INCLUDES) $(LIBS)
 
 build/obj/%.o: src/%.c | prepare
@@ -41,11 +48,15 @@ build/obj/glad.o: thirdparty/glad/src/gl.c | prepare
 build/obj/stb_image.o: thirdparty/stb/stb_image.c | prepare
 	gcc $(CFLAGS) -c -o $@ $< $(INCLUDES)
 
+# assimp
+# manual build, see README.md
+
 # thirdparty deps end   #################################################################
 
 .PHONY: prepare
 prepare:
 	mkdir -p build/obj
+	cp -a thirdparty/assimp/libassimp.* build
 
 .PHONY: lsp
 lsp: clean

@@ -11,6 +11,7 @@
       "-I./src",
       "-I./thirdparty/glad/include",
       "-I./thirdparty/stb",
+      "-I./thirdparty/assimp/include",
       "-o",
       "build/obj/camera.o",
       "src/camera.c"
@@ -31,6 +32,7 @@
       "-I./src",
       "-I./thirdparty/glad/include",
       "-I./thirdparty/stb",
+      "-I./thirdparty/assimp/include",
       "-o",
       "build/obj/la.o",
       "src/la.c"
@@ -51,6 +53,7 @@
       "-I./src",
       "-I./thirdparty/glad/include",
       "-I./thirdparty/stb",
+      "-I./thirdparty/assimp/include",
       "-o",
       "build/obj/shader.o",
       "src/shader.c"
@@ -71,6 +74,7 @@
       "-I./src",
       "-I./thirdparty/glad/include",
       "-I./thirdparty/stb",
+      "-I./thirdparty/assimp/include",
       "-o",
       "build/obj/texture.o",
       "src/texture.c"
@@ -91,6 +95,7 @@
       "-I./src",
       "-I./thirdparty/glad/include",
       "-I./thirdparty/stb",
+      "-I./thirdparty/assimp/include",
       "-o",
       "build/obj/tut.o",
       "src/tut.c"
@@ -111,6 +116,7 @@
       "-I./src",
       "-I./thirdparty/glad/include",
       "-I./thirdparty/stb",
+      "-I./thirdparty/assimp/include",
       "-o",
       "build/obj/glad.o",
       "thirdparty/glad/src/gl.c"
@@ -131,6 +137,7 @@
       "-I./src",
       "-I./thirdparty/glad/include",
       "-I./thirdparty/stb",
+      "-I./thirdparty/assimp/include",
       "-o",
       "build/obj/stb_image.o",
       "thirdparty/stb/stb_image.c"
@@ -158,6 +165,7 @@
       "-I./src",
       "-I./thirdparty/glad/include",
       "-I./thirdparty/stb",
+      "-I./thirdparty/assimp/include",
       "-o",
       "build/main",
       "cmd/main.c"
@@ -185,6 +193,7 @@
       "-I./src",
       "-I./thirdparty/glad/include",
       "-I./thirdparty/stb",
+      "-I./thirdparty/assimp/include",
       "-o",
       "build/tex",
       "cmd/tex.c"
@@ -192,5 +201,33 @@
     "directory": "/home/koalayt/Projects/opengl4tut",
     "file": "/home/koalayt/Projects/opengl4tut/cmd/tex.c",
     "output": "/home/koalayt/Projects/opengl4tut/build/tex"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Wextra",
+      "-g",
+      "-O2",
+      "-std=c11",
+      "build/obj/camera.o",
+      "build/obj/la.o",
+      "build/obj/shader.o",
+      "build/obj/texture.o",
+      "build/obj/tut.o",
+      "build/obj/glad.o",
+      "build/obj/stb_image.o",
+      "-I./src",
+      "-I./thirdparty/glad/include",
+      "-I./thirdparty/stb",
+      "-I./thirdparty/assimp/include",
+      "-o",
+      "build/model",
+      "cmd/model.c"
+    ],
+    "directory": "/home/koalayt/Projects/opengl4tut",
+    "file": "/home/koalayt/Projects/opengl4tut/cmd/model.c",
+    "output": "/home/koalayt/Projects/opengl4tut/build/model"
   }
 ]
