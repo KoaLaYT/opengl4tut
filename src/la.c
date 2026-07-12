@@ -1,5 +1,13 @@
-#include "la.h"
 #include <math.h>
+
+#include "la.h"
+
+V2f v2f(float x, float y) {
+  V2f v = {0};
+  v.x = x;
+  v.y = y;
+  return v;
+}
 
 V3f v3f(float x, float y, float z) {
   V3f v = {0};

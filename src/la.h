@@ -45,6 +45,8 @@ typedef union {
   float a[4];
 } Quat;
 
+V2f v2f(float x, float y);
+
 V3f v3f(float x, float y, float z);
 V3f v3f_neg(V3f v);
 

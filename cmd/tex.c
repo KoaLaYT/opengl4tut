@@ -8,7 +8,7 @@
 #include "la.h"
 #include "shader.h"
 #include "camera.h"
-#include "texture.h"
+#include "model.h"
 
 #define MOUSE_SENSITIVITY 0.05
 #define MOVE_SPEED        6
@@ -62,7 +62,7 @@ int main() {
   // glCullFace(GL_BACK);     // cull back face
   // glFrontFace(GL_CW);      // clock-wise
 
-  Texture tex = texture_init("asset/smile.png");
+  Texture tex = texture_init("asset/smile.png", TextureDiffuse);
 
   GLfloat data[] = {
     // vertice x, y  texture s, t

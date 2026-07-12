@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wextra -g -O2 -std=c11
+CFLAGS = -Wall -Wextra -g -O3 -std=c11
 LIBS = $(shell pkg-config --libs glfw3) -lm -Wl,-rpath,'$$ORIGIN' -L./thirdparty/assimp -lassimp
 SOURCES = $(wildcard src/*.c)
 OBJECTS = $(patsubst src/%.c,build/obj/%.o,$(SOURCES))

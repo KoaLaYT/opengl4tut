@@ -12,7 +12,7 @@
 #include "la.h"
 #include "shader.h"
 #include "camera.h"
-#include "texture.h"
+#include "model.h"
 
 #define MOUSE_SENSITIVITY 0.05
 #define MOVE_SPEED        6
@@ -154,8 +154,8 @@ int main(void) {
 	  v3f( 0.0f,  0.0f, -3.0f)
   };
 
-  Texture diffuse_tex = texture_init("asset/container.png");
-  Texture spcular_tex = texture_init("asset/container_specular.png");
+  Texture diffuse_tex = texture_init("asset/container.png", TextureDiffuse);
+  Texture spcular_tex = texture_init("asset/container_specular.png", TextureSpecular);
   Shader cube_shader  = shader_init("glsl/cube.vert", "glsl/cube.frag");
   Shader light_shader = shader_init("glsl/light.vert", "glsl/light.frag");
 
