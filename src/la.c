@@ -97,6 +97,20 @@ M4f m4f_scale(M4f m, float v) {
   return m4f_mul(m, s);
 }
 
+M4f m4f_rot_x(float rad) {
+  M4f m = m4f_id();
+
+  float s = sin(rad);
+  float c = cos(rad);
+
+  m._22 = c;
+  m._23 = s;
+  m._32 = -s;
+  m._33 = c;
+
+  return m;
+}
+
 M4f m4f_rot_y(float rad) {
   M4f m = m4f_id();
 

@@ -134,31 +134,86 @@ int main(void) {
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), NULL);
   glEnableVertexAttribArray(0);
 
+  V3f cube_positions[] = {
+    v3f( 0.0f,  0.0f,  0.0f),
+    v3f( 2.0f,  5.0f, -15.0f),
+    v3f(-1.5f, -2.2f, -2.5f),
+    v3f(-3.8f, -2.0f, -12.3f),
+    v3f( 2.4f, -0.4f, -3.5f),
+    v3f(-1.7f,  3.0f, -7.5f),
+    v3f( 1.3f, -2.0f, -2.5f),
+    v3f( 1.5f,  2.0f, -2.5f),
+    v3f( 1.5f,  0.2f, -1.5f),
+    v3f(-1.3f,  1.0f, -1.5f)
+  };
+
+  V3f point_light_positions[] = {
+	  v3f( 0.7f,  0.2f,  2.0f),
+	  v3f( 2.3f, -3.3f, -4.0f),
+	  v3f(-4.0f,  2.0f, -12.0f),
+	  v3f( 0.0f,  0.0f, -3.0f)
+  };
+
   Texture diffuse_tex = texture_init("asset/container.png");
   Texture spcular_tex = texture_init("asset/container_specular.png");
   Shader cube_shader  = shader_init("glsl/cube.vert", "glsl/cube.frag");
   Shader light_shader = shader_init("glsl/light.vert", "glsl/light.frag");
 
+  g_camera = camera_init(v3f(0,0,10));
   V3f light_color = v3f(1.0,1.0,1.0);
   V3f diffuse_color = v3f(light_color.x*0.5,light_color.y*0.5,light_color.z*0.5);
   V3f ambient_color = v3f(light_color.x*0.1,light_color.y*0.1,light_color.z*0.1);
   shader_use(cube_shader);
-  shader_set_v3f(cube_shader, "light.ambient", ambient_color);
-  shader_set_v3f(cube_shader, "light.diffuse", diffuse_color);
-  shader_set_v3f(cube_shader, "light.specular", v3f(1.0,1.0,1.0));
+  // directional light
+  shader_set_v3f(cube_shader, "dir_light.ambient", ambient_color);
+  shader_set_v3f(cube_shader, "dir_light.diffuse", diffuse_color);
+  shader_set_v3f(cube_shader, "dir_light.specular", v3f(1.0,1.0,1.0));
+  shader_set_v3f(cube_shader, "dir_light.direction", v3f(-0.2,-1.0,-0.3));
+  // point light 0
+  shader_set_v3f(cube_shader, "point_lights[0].ambient", ambient_color);
+  shader_set_v3f(cube_shader, "point_lights[0].diffuse", diffuse_color);
+  shader_set_v3f(cube_shader, "point_lights[0].specular", v3f(1.0,1.0,1.0));
+  shader_set_v3f(cube_shader, "point_lights[0].position", point_light_positions[0]);
+  shader_set_float(cube_shader, "point_lights[0].constant", 1.0);
+  shader_set_float(cube_shader, "point_lights[0].linear", 0.09);
+  shader_set_float(cube_shader, "point_lights[0].quadratic", 0.032);
+  // point light 1
+  shader_set_v3f(cube_shader, "point_lights[1].ambient", ambient_color);
+  shader_set_v3f(cube_shader, "point_lights[1].diffuse", diffuse_color);
+  shader_set_v3f(cube_shader, "point_lights[1].specular", v3f(1.0,1.0,1.0));
+  shader_set_v3f(cube_shader, "point_lights[1].position", point_light_positions[1]);
+  shader_set_float(cube_shader, "point_lights[1].constant", 1.0);
+  shader_set_float(cube_shader, "point_lights[1].linear", 0.09);
+  shader_set_float(cube_shader, "point_lights[1].quadratic", 0.032);
+  // point light 2
+  shader_set_v3f(cube_shader, "point_lights[2].ambient", ambient_color);
+  shader_set_v3f(cube_shader, "point_lights[2].diffuse", diffuse_color);
+  shader_set_v3f(cube_shader, "point_lights[2].specular", v3f(1.0,1.0,1.0));
+  shader_set_v3f(cube_shader, "point_lights[2].position", point_light_positions[2]);
+  shader_set_float(cube_shader, "point_lights[2].constant", 1.0);
+  shader_set_float(cube_shader, "point_lights[2].linear", 0.09);
+  shader_set_float(cube_shader, "point_lights[2].quadratic", 0.032);
+  // point light 3
+  shader_set_v3f(cube_shader, "point_lights[3].ambient", ambient_color);
+  shader_set_v3f(cube_shader, "point_lights[3].diffuse", diffuse_color);
+  shader_set_v3f(cube_shader, "point_lights[3].specular", v3f(1.0,1.0,1.0));
+  shader_set_v3f(cube_shader, "point_lights[3].position", point_light_positions[3]);
+  shader_set_float(cube_shader, "point_lights[3].constant", 1.0);
+  shader_set_float(cube_shader, "point_lights[3].linear", 0.09);
+  shader_set_float(cube_shader, "point_lights[3].quadratic", 0.032);
+  // flash light
+  shader_set_v3f(cube_shader, "flash_light.ambient", ambient_color);
+  shader_set_v3f(cube_shader, "flash_light.diffuse", diffuse_color);
+  shader_set_v3f(cube_shader, "flash_light.specular", v3f(1.0,1.0,1.0));
+  shader_set_float(cube_shader, "flash_light.inner_cutoff", cos(DEG_TO_RAD(12.5)));
+  shader_set_float(cube_shader, "flash_light.outer_cutoff", cos(DEG_TO_RAD(17.5)));
+
   shader_set_int(cube_shader, "material.diffuse", 0);
   shader_set_int(cube_shader, "material.specular", 1);
   shader_set_float(cube_shader, "material.shininess", 32.0f);
 
-  V3f light_pos = v3f(1.2,1.0,2.0);
-  g_camera = camera_init(v3f(0,0,10));
-  float rad = 0.0f;
-
   while (!glfwWindowShouldClose(window)) {
     double elapsed_secs = update_fps_counter(window);
-
-    rad = 30*DEG_TO_RAD(elapsed_secs);
-    light_pos = m3f_mul_vec(m3f_rot_y(rad), light_pos);
 
     process_keypress(window, elapsed_secs);
 
@@ -166,29 +221,36 @@ int main(void) {
     M4f view = camera_view(&g_camera);
     {
       shader_use(cube_shader);
-      M4f model = m4f_id();
-      shader_set_v3f(cube_shader, "light_position", light_pos);
-      shader_set_m4f(cube_shader, "model", model);
-      shader_set_m4f(cube_shader, "view", view);
-      shader_set_m4f(cube_shader, "projection", g_projection);
-      glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D, diffuse_tex.id);
-      glActiveTexture(GL_TEXTURE0+1);
-      glBindTexture(GL_TEXTURE_2D, spcular_tex.id);
-      glBindVertexArray(cube_vao);
-      glDrawArrays(GL_TRIANGLES, 0, 36);
+      for (int i = 0; i < 10; i++) {
+        M4f model = m4f_id();
+        model = m4f_translate(model, cube_positions[i]);
+        model = m4f_mul(model, m4f_rot_x(DEG_TO_RAD(20.0*i)));
+        model = m4f_mul(model, m4f_rot_y(DEG_TO_RAD(20.0*i)));
+        model = m4f_mul(model, m4f_rot_z(DEG_TO_RAD(20.0*i)));
+        shader_set_m4f(cube_shader, "model", model);
+        shader_set_m4f(cube_shader, "view", view);
+        shader_set_m4f(cube_shader, "projection", g_projection);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, diffuse_tex.id);
+        glActiveTexture(GL_TEXTURE0+1);
+        glBindTexture(GL_TEXTURE_2D, spcular_tex.id);
+        glBindVertexArray(cube_vao);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+      }
     }
     {
       shader_use(light_shader);
-      M4f model = m4f_id();
-      model = m4f_translate(model, light_pos);
-      model = m4f_scale(model, 0.2);
-      shader_set_v3f(light_shader, "light_color", light_color);
-      shader_set_m4f(light_shader, "model", model);
-      shader_set_m4f(light_shader, "view", view);
-      shader_set_m4f(light_shader, "projection", g_projection);
-      glBindVertexArray(light_vao);
-      glDrawArrays(GL_TRIANGLES, 0, 36);
+      for (int i = 0; i < 4; i++) {
+        M4f model = m4f_id();
+        model = m4f_translate(model, point_light_positions[i]);
+        model = m4f_scale(model, 0.2);
+        shader_set_v3f(light_shader, "light_color", light_color);
+        shader_set_m4f(light_shader, "model", model);
+        shader_set_m4f(light_shader, "view", view);
+        shader_set_m4f(light_shader, "projection", g_projection);
+        glBindVertexArray(light_vao);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+      }
     }
 
     glfwPollEvents();
