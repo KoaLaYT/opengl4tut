@@ -14,6 +14,38 @@ V3f v3f_neg(V3f v) {
   return vv;
 }
 
+M3f m3f_id() {
+  M3f m = {0};
+  m._11 = 1.0f;
+  m._22 = 1.0f;
+  m._33 = 1.0f;
+  return m;
+}
+
+V3f m3f_mul_vec(M3f m, V3f v) {
+  V3f r = {0};
+
+  r.x = m._11*v.x + m._21*v.y + m._31*v.z;
+  r.y = m._12*v.x + m._22*v.y + m._32*v.z;
+  r.z = m._13*v.x + m._23*v.y + m._33*v.z;
+
+  return r;
+}
+
+M3f m3f_rot_y(float rad) {
+  M3f m = m3f_id();
+
+  float s = sin(rad);
+  float c = cos(rad);
+
+  m._11 = c;
+  m._13 = -s;
+  m._31 = s;
+  m._33 = c;
+
+  return m;
+}
+
 M4f m4f_id() {
   M4f m = {0};
   m._11 = 1.0f;

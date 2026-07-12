@@ -21,6 +21,15 @@ typedef union {
 
 typedef union {
   struct {
+    float _11, _12, _13;
+    float _21, _22, _23;
+    float _31, _32, _33;
+  };
+  float a[9];
+} M3f;
+
+typedef union {
+  struct {
     float _11, _12, _13, _14;
     float _21, _22, _23, _24;
     float _31, _32, _33, _34;
@@ -38,6 +47,10 @@ typedef union {
 
 V3f v3f(float x, float y, float z);
 V3f v3f_neg(V3f v);
+
+M3f m3f_id();
+V3f m3f_mul_vec(M3f m, V3f v);
+M3f m3f_rot_y(float rad);
 
 M4f m4f_id();
 M4f m4f_mul(M4f a, M4f b);

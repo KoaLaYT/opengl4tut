@@ -66,47 +66,47 @@ int main(void) {
   // glFrontFace(GL_CW);      // clock-wise
 
   GLfloat vertices[] = {
-    -0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-    -0.5f,  0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-    -0.5f, -0.5f,  0.5f,
-     0.5f, -0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
-    -0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-    -0.5f, -0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-     0.5f,  0.5f,  0.5f,
-     0.5f,  0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-    -0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f,  0.5f,
-     0.5f, -0.5f,  0.5f,
-    -0.5f, -0.5f,  0.5f,
-    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-    -0.5f,  0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-     0.5f,  0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f, -0.5f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
   };
 
   GLuint vbo = 0;
@@ -118,37 +118,55 @@ int main(void) {
   glGenVertexArrays(1, &cube_vao);
   glBindVertexArray(cube_vao);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), NULL);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), NULL);
   glEnableVertexAttribArray(0);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
+  glEnableVertexAttribArray(1);
 
   GLuint light_vao = 0;
   glGenVertexArrays(1, &light_vao);
   glBindVertexArray(light_vao);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), NULL);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), NULL);
   glEnableVertexAttribArray(0);
 
-  Shader default_shader = shader_init("glsl/default.vert", "glsl/default.frag");
-  Shader light_shader   = shader_init("glsl/default.vert", "glsl/light.frag");
+  Shader cube_shader  = shader_init("glsl/cube.vert", "glsl/cube.frag");
+  Shader light_shader = shader_init("glsl/light.vert", "glsl/light.frag");
 
   V3f light_pos = v3f(1.2,1.0,2.0);
+  V3f light_color = {0};
   g_camera = camera_init(v3f(0,0,10));
+  float rad = 0.0f;
 
   while (!glfwWindowShouldClose(window)) {
     double elapsed_secs = update_fps_counter(window);
+
+    rad = 30*DEG_TO_RAD(elapsed_secs);
+    light_pos = m3f_mul_vec(m3f_rot_y(rad), light_pos);
+    light_color.x = sin(glfwGetTime()*2.0f);
+    light_color.y = sin(glfwGetTime()*0.7f);
+    light_color.z = sin(glfwGetTime()*1.3f);
+    V3f diffuse_color = v3f(light_color.x*0.5,light_color.y*0.5,light_color.z*0.5);
+    V3f ambient_color = v3f(light_color.x*0.1,light_color.y*0.1,light_color.z*0.1);
 
     process_keypress(window, elapsed_secs);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     M4f view = camera_view(&g_camera);
     {
-      shader_use(default_shader);
+      shader_use(cube_shader);
       M4f model = m4f_id();
-      shader_set_v3f(default_shader, "object_color", v3f(1.0,0.5,0.3));
-      shader_set_v3f(default_shader, "light_color",  v3f(1.0,1.0,1.0));
-      shader_set_m4f(default_shader, "model", model);
-      shader_set_m4f(default_shader, "view", view);
-      shader_set_m4f(default_shader, "projection", g_projection);
+      shader_set_v3f(cube_shader, "light.ambient", ambient_color);
+      shader_set_v3f(cube_shader, "light.diffuse", diffuse_color);
+      shader_set_v3f(cube_shader, "light.specular", v3f(1.0,1.0,1.0));
+      shader_set_v3f(cube_shader, "light_position", light_pos);
+      shader_set_v3f(cube_shader, "material.ambient", v3f(1.0,0.5,0.3));
+      shader_set_v3f(cube_shader, "material.diffuse", v3f(1.0,0.5,0.3));
+      shader_set_v3f(cube_shader, "material.specular", v3f(0.5,0.5,0.5));
+      shader_set_float(cube_shader, "material.shininess", 32.0f);
+      shader_set_m4f(cube_shader, "model", model);
+      shader_set_m4f(cube_shader, "view", view);
+      shader_set_m4f(cube_shader, "projection", g_projection);
       glBindVertexArray(cube_vao);
       glDrawArrays(GL_TRIANGLES, 0, 36);
     }
@@ -157,6 +175,7 @@ int main(void) {
       M4f model = m4f_id();
       model = m4f_translate(model, light_pos);
       model = m4f_scale(model, 0.2);
+      shader_set_v3f(light_shader, "light_color", light_color);
       shader_set_m4f(light_shader, "model", model);
       shader_set_m4f(light_shader, "view", view);
       shader_set_m4f(light_shader, "projection", g_projection);

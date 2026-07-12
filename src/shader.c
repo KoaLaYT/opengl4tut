@@ -63,14 +63,19 @@ void shader_use(Shader s) {
   glUseProgram(s.id);
 }
 
-void shader_set_m4f(Shader s, const char* name, M4f value) {
+void shader_set_float(Shader s, const char* name, float value) {
   int loc = glGetUniformLocation(s.id, name);
-  glUniformMatrix4fv(loc, 1, GL_FALSE, value.a);
+  glUniform1f(loc, value);
 }
 
 void shader_set_v3f(Shader s, const char* name, V3f value) {
   int loc = glGetUniformLocation(s.id, name);
   glUniform3fv(loc, 1, value.a);
+}
+
+void shader_set_m4f(Shader s, const char* name, M4f value) {
+  int loc = glGetUniformLocation(s.id, name);
+  glUniformMatrix4fv(loc, 1, GL_FALSE, value.a);
 }
 
 static const char* tut_read_entire_file(const char* path) {
