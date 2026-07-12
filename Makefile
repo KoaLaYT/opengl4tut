@@ -1,8 +1,9 @@
 CFLAGS = -Wall -Wextra -g -O2 -std=c11
 LIBS = $(shell pkg-config --libs glfw3) -lm
 SOURCES = $(wildcard src/*.c)
-OBJECTS = $(patsubst src/%.c,build/%.o,$(SOURCES))
-INCLUDES = -I./thirdparty/glad/include
+OBJECTS = $(patsubst src/%.c,build/obj/%.o,$(SOURCES))
+THIRDPARTIES = build/obj/glad.o
+INCLUDES = -I./thirdparty/glad/include -I./src
 
 $(info SOURCES = $(SOURCES))
 $(info OBJECTS = $(OBJECTS))
@@ -18,21 +19,22 @@ run: build/main
 clean:
 	rm -rf build/*
 
-build/main: $(OBJECTS) build/glad.o | build
-	gcc $(CFLAGS) -o build/main $(OBJECTS) build/glad.o $(INCLUDES) $(LIBS)
+build/main: $(OBJECTS) build/obj/glad.o | prepare
+	gcc $(CFLAGS) -o build/main cmd/main.c $(OBJECTS) $(THIRDPARTIES) $(INCLUDES) $(LIBS)
 
-build/%.o: src/%.c | build
+build/obj/%.o: src/%.c | prepare
 	gcc $(CFLAGS) -c -o $@ $< $(INCLUDES)
 
 # thirdparty deps begin #################################################################
 # glad
-build/glad.o: thirdparty/glad/src/gl.c | build
-	gcc $(CFLAGS) -c -o build/glad.o thirdparty/glad/src/gl.c $(INCLUDES)
+build/obj/glad.o: thirdparty/glad/src/gl.c | prepare
+	gcc $(CFLAGS) -c -o build/obj/glad.o thirdparty/glad/src/gl.c $(INCLUDES)
 
 # thirdparty deps end   #################################################################
 
-build:
-	mkdir -p build
+.PHONY: prepare
+prepare:
+	mkdir -p build/obj
 
 .PHONY: lsp
 lsp: clean

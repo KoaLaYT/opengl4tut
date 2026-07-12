@@ -9,13 +9,14 @@
       "-std=c11",
       "-c",
       "-I./thirdparty/glad/include",
+      "-I./src",
       "-o",
-      "build/camera.o",
+      "build/obj/camera.o",
       "src/camera.c"
     ],
     "directory": "/home/koalayt/Projects/opengl4tut",
     "file": "/home/koalayt/Projects/opengl4tut/src/camera.c",
-    "output": "/home/koalayt/Projects/opengl4tut/build/camera.o"
+    "output": "/home/koalayt/Projects/opengl4tut/build/obj/camera.o"
   },
   {
     "arguments": [
@@ -27,13 +28,14 @@
       "-std=c11",
       "-c",
       "-I./thirdparty/glad/include",
+      "-I./src",
       "-o",
-      "build/la.o",
+      "build/obj/la.o",
       "src/la.c"
     ],
     "directory": "/home/koalayt/Projects/opengl4tut",
     "file": "/home/koalayt/Projects/opengl4tut/src/la.c",
-    "output": "/home/koalayt/Projects/opengl4tut/build/la.o"
+    "output": "/home/koalayt/Projects/opengl4tut/build/obj/la.o"
   },
   {
     "arguments": [
@@ -45,13 +47,14 @@
       "-std=c11",
       "-c",
       "-I./thirdparty/glad/include",
+      "-I./src",
       "-o",
-      "build/main.o",
-      "src/main.c"
+      "build/obj/shader.o",
+      "src/shader.c"
     ],
     "directory": "/home/koalayt/Projects/opengl4tut",
-    "file": "/home/koalayt/Projects/opengl4tut/src/main.c",
-    "output": "/home/koalayt/Projects/opengl4tut/build/main.o"
+    "file": "/home/koalayt/Projects/opengl4tut/src/shader.c",
+    "output": "/home/koalayt/Projects/opengl4tut/build/obj/shader.o"
   },
   {
     "arguments": [
@@ -63,13 +66,14 @@
       "-std=c11",
       "-c",
       "-I./thirdparty/glad/include",
+      "-I./src",
       "-o",
-      "build/tut.o",
+      "build/obj/tut.o",
       "src/tut.c"
     ],
     "directory": "/home/koalayt/Projects/opengl4tut",
     "file": "/home/koalayt/Projects/opengl4tut/src/tut.c",
-    "output": "/home/koalayt/Projects/opengl4tut/build/tut.o"
+    "output": "/home/koalayt/Projects/opengl4tut/build/obj/tut.o"
   },
   {
     "arguments": [
@@ -81,12 +85,37 @@
       "-std=c11",
       "-c",
       "-I./thirdparty/glad/include",
+      "-I./src",
       "-o",
-      "build/glad.o",
+      "build/obj/glad.o",
       "thirdparty/glad/src/gl.c"
     ],
     "directory": "/home/koalayt/Projects/opengl4tut",
     "file": "/home/koalayt/Projects/opengl4tut/thirdparty/glad/src/gl.c",
-    "output": "/home/koalayt/Projects/opengl4tut/build/glad.o"
+    "output": "/home/koalayt/Projects/opengl4tut/build/obj/glad.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Wextra",
+      "-g",
+      "-O2",
+      "-std=c11",
+      "build/obj/camera.o",
+      "build/obj/la.o",
+      "build/obj/shader.o",
+      "build/obj/tut.o",
+      "build/obj/glad.o",
+      "-I./thirdparty/glad/include",
+      "-I./src",
+      "-o",
+      "build/main",
+      "cmd/main.c"
+    ],
+    "directory": "/home/koalayt/Projects/opengl4tut",
+    "file": "/home/koalayt/Projects/opengl4tut/cmd/main.c",
+    "output": "/home/koalayt/Projects/opengl4tut/build/main"
   }
 ]
