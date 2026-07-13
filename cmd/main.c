@@ -1,12 +1,11 @@
-#include <glad/gl.h>
-#include <GLFW/glfw3.h>
-
-#include <error.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <sys/stat.h>
+
+#include <glad/gl.h>
+#include <GLFW/glfw3.h>
 
 #include "tut.h"
 #include "la.h"
@@ -46,6 +45,13 @@ int main(void) {
   }
 
   glfwWindowHint(GLFW_SAMPLES, 4); // anti-aliasing
+#if __APPLE__
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#endif
+
   GLFWwindow* window = glfwCreateWindow(g_win_width, g_win_height, "", NULL, NULL);
   if (!window) {
     tut_log_err("could not open window with GLFW3\n");
@@ -65,6 +71,15 @@ int main(void) {
   // glEnable(GL_CULL_FACE);  // cull face
   // glCullFace(GL_BACK);     // cull back face
   // glFrontFace(GL_CW);      // clock-wise
+
+#if __APPLE__
+  {
+    int fb_width, fb_height;
+    glfwGetFramebufferSize(window, &fb_width, &fb_height);
+    glViewport(0, 0, fb_width, fb_height);
+    update_projection_matrix(fb_width, fb_height);
+  }
+#endif
 
   GLfloat vertices[] = {
     // positions          // normals           // texture coords

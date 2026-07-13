@@ -1,17 +1,21 @@
-#include "tut.h"
-#include <glad/gl.h>
 #include <errno.h>
-#include <error.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
+
+#include <glad/gl.h>
+
+#include "tut.h"
 
 #define GL_LOG_FILE "/tmp/opengl4tut.log"
 
 void tut_restart_log() {
   FILE* f = fopen(GL_LOG_FILE, "w");
   if (!f) {
-    error(1, errno, "tut_restart_log: fopen: %s", GL_LOG_FILE);
+    fprintf(stderr, "tut_restart_log: fopen: %s: %s", GL_LOG_FILE, strerror(errno));
+    exit(1);
   }
 
   time_t now = time(NULL);
@@ -33,7 +37,8 @@ void tut_log_info(const char* msg, ...) {
   va_list ap;
   FILE* f = fopen(GL_LOG_FILE, "a");
   if (!f) {
-    error(1, errno, "tut_log: fopen: %s", GL_LOG_FILE);
+    fprintf(stderr, "tut_log: fopen: %s: %s", GL_LOG_FILE, strerror(errno));
+    exit(1);
   }
 
   fprintf(f, "[INFO] ");
@@ -47,7 +52,8 @@ void tut_log_err(const char* msg, ...) {
   va_list ap;
   FILE* f = fopen(GL_LOG_FILE, "a");
   if (!f) {
-    error(1, errno, "tut_log_err: fopen: %s", GL_LOG_FILE);
+    fprintf(stderr, "tut_log_err: fopen: %s: %s", GL_LOG_FILE, strerror(errno));
+    exit(1);
   }
 
   fprintf(f, "[ERROR] ");
@@ -76,7 +82,6 @@ void tut_log_glparams() {
       GL_MAX_FRAGMENT_UNIFORM_COMPONENTS,
       GL_MAX_TEXTURE_IMAGE_UNITS,
       GL_MAX_TEXTURE_SIZE,
-      GL_MAX_VARYING_FLOATS,
       GL_MAX_VERTEX_ATTRIBS,
       GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS,
       GL_MAX_VERTEX_UNIFORM_COMPONENTS,
@@ -90,7 +95,6 @@ void tut_log_glparams() {
       "GL_MAX_FRAGMENT_UNIFORM_COMPONENTS",
       "GL_MAX_TEXTURE_IMAGE_UNITS",
       "GL_MAX_TEXTURE_SIZE",
-      "GL_MAX_VARYING_FLOATS",
       "GL_MAX_VERTEX_ATTRIBS",
       "GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS",
       "GL_MAX_VERTEX_UNIFORM_COMPONENTS",
@@ -98,17 +102,17 @@ void tut_log_glparams() {
       "GL_STEREO",
   };
   tut_log_info("GL Context Params:\n");
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 9; i++) {
     int v = 0;
     glGetIntegerv(params[i], &v);
     tut_log_info("%s %i\n", names[i], v);
   }
   int v[2];
   v[0] = v[1] = 0;
-  glGetIntegerv(params[10], v);
-  tut_log_info("%s %i %i\n", names[10], v[0], v[1]);
+  glGetIntegerv(params[9], v);
+  tut_log_info("%s %i %i\n", names[9], v[0], v[1]);
   unsigned char s = 0;
-  glGetBooleanv(params[11], &s);
-  tut_log_info("%s %u\n", names[11], (unsigned int)s);
+  glGetBooleanv(params[10], &s);
+  tut_log_info("%s %u\n", names[10], (unsigned int)s);
   tut_log_info("-----------------------------\n");
 }

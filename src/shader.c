@@ -1,10 +1,11 @@
-#include "shader.h"
-#include "tut.h"
 #include <errno.h>
-#include <error.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/stat.h>
+
+#include "shader.h"
+#include "tut.h"
 
 #define SHADER_LOG_SIZE 2048
 
@@ -119,6 +120,7 @@ on_error:
   if (buf) {
     free(buf);
   }
-  error(1, errno, "read_entire_file(%s)", path);
+  tut_log_err("read_entire_file(%s): %s", path, strerror(errno));
+  exit(1);
   return NULL;
 }
