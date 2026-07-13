@@ -63,7 +63,7 @@ void mesh_deinit(Mesh* m) {
   }
 }
 
-void mesh_draw(const Mesh* m, Shader s) {
+void mesh_draw(const Mesh* m, Glsb_Shader s) {
   char buf[128];
   int diffuse_nr  = 1;
   int specular_nr = 1;
@@ -78,7 +78,7 @@ void mesh_draw(const Mesh* m, Shader s) {
         snprintf(buf, sizeof(buf), "material.texture_specular%d", specular_nr++);
         break;
     }
-    shader_set_int(s, buf, i);
+    glsb_shader_set_int(s, buf, i);
     glBindTexture(GL_TEXTURE_2D, tex.id);
   }
   glActiveTexture(GL_TEXTURE0);
@@ -123,7 +123,7 @@ void model_deinit(Model* m) {
   }
 }
 
-void model_draw(const Model* m, Shader s) {
+void model_draw(const Model* m, Glsb_Shader s) {
   for (size_t i = 0; i < m->meshes_len; i++) {
     mesh_draw(m->meshes + i, s);
   }

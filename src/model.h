@@ -56,10 +56,10 @@ Mesh mesh_init(Vertex*  vertices, size_t vertices_len,
                GLuint*  indices,  size_t indices_len,
                Texture* textures, size_t textures_len);
 void mesh_deinit(Mesh* m);
-void mesh_draw(const Mesh* m, Shader shader);
+void mesh_draw(const Mesh* m, Glsb_Shader shader);
 
 Model model_init(const char* path);
 void model_deinit(Model* m);
-void model_draw(const Model* m, Shader s);
+void model_draw(const Model* m, Glsb_Shader s);
 
 #endif // INCLUDE_MODEL_H

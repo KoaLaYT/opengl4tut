@@ -10,7 +10,7 @@
 
 typedef struct {
   Camera camera;
-  Shader shader;
+  Glsb_Shader shader;
   Texture tex;
   GLuint vao;
 } Context;
@@ -20,7 +20,7 @@ static void startup(Glsb_App* app) {
 
   ctx->tex = texture_init("asset/smile.png", TextureDiffuse);
   ctx->camera = camera_init(v3f(0,0,4));
-  ctx->shader = shader_init("glsl/texture.vert", "glsl/texture.frag");
+  ctx->shader = glsb_shader_init("glsl/texture.vert", "glsl/texture.frag");
 
   GLfloat data[] = {
     // vertice x, y  texture s, t
@@ -54,11 +54,11 @@ static void render(Glsb_App* app, double curr_secs) {
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   M4f view = camera_view(&ctx->camera);
-  shader_use(ctx->shader);
+  glsb_shader_use(ctx->shader);
   M4f model = m4f_id();
-  shader_set_m4f(ctx->shader, "model", model);
-  shader_set_m4f(ctx->shader, "view", view);
-  shader_set_m4f(ctx->shader, "projection", app->projection);
+  glsb_shader_set_m4f(ctx->shader, "model", model);
+  glsb_shader_set_m4f(ctx->shader, "view", view);
+  glsb_shader_set_m4f(ctx->shader, "projection", app->projection);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, ctx->tex.id);
   glBindVertexArray(ctx->vao);
@@ -67,15 +67,17 @@ static void render(Glsb_App* app, double curr_secs) {
 
 
 int main() {
-  Glsb_App* app = glsb_app_init();
+  glsb_app_init();
 
   Context ctx = {0};
-  app->context = &ctx;
+  glsb_app_set_context(&ctx);
 
-  app->startup = startup;
-  app->render = render;
+  glsb_app_startup(startup);
+  glsb_app_render(render);
 
   glsb_app_run();
+
   glsb_app_deinit();
+
   return 0;
 }

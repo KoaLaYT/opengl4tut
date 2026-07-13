@@ -12,6 +12,7 @@
 
 #define UNUSED(s) (void)(s)
 
+static void glsb_app_setup_default(Glsb_App* app);
 static void glfw_on_window_resize(GLFWwindow* window, int w, int h);
 static void glfw_on_framebuffer_resize(GLFWwindow* window, int w, int h);
 static void glfw_on_key(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -24,14 +25,13 @@ static M4f update_projection_matrix(int w, int h);
 
 static Glsb_App* g_app = NULL;
 
-Glsb_App* glsb_app_init() {
+void glsb_app_init() {
   g_app = malloc(sizeof(Glsb_App));
   if (!g_app) {
     fprintf(stderr, "Buy more RAM!\n");
-    return NULL;
+    return;
   }
   g_app->setup = glsb_app_setup_default;
-  return g_app;
 }
 
 void glsb_app_deinit() {
@@ -132,11 +132,36 @@ void glsb_app_run() {
   glfwTerminate();
 }
 
-void glsb_app_setup_default(Glsb_App* app) {
+void glsb_app_set_context(void* context) {
+  g_app->context = context;
+}
+
+void glsb_app_setup(Glsb_AppSetupFn* fn) {
+  g_app->setup = fn;
+}
+
+void glsb_app_startup(Glsb_AppStartupFn* fn) {
+  g_app->startup = fn;
+}
+
+void glsb_app_render(Glsb_AppRenderFn* fn) {
+  g_app->render = fn;
+}
+
+void glsb_app_shutdown(Glsb_AppShutdownFn* fn) {
+  g_app->shutdown = fn;
+}
+
+static void glsb_app_setup_default(Glsb_App* app) {
   app->info.window_width  = 800;
   app->info.window_height = 600;
+#if __APPLE__
   app->info.major_version = 4;
   app->info.minor_version = 1;
+#else
+  app->info.major_version = 4;
+  app->info.minor_version = 6;
+#endif
   app->info.samples = 0;
   app->info.flags.all = 0;
   app->info.flags.cursor = 1;

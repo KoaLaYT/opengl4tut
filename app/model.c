@@ -83,17 +83,17 @@ int main() {
   const char* model_path = "/home/koalayt/Downloads/backpack/backpack.obj";
 #endif
   Model m = model_init(model_path);
-  Shader shader  = shader_init("glsl/model.vert", "glsl/model.frag");
+  Glsb_Shader shader  = glsb_shader_init("glsl/model.vert", "glsl/model.frag");
   g_camera = camera_init(v3f(0,0,4));
   V3f light_color = v3f(1.0,1.0,1.0);
   V3f diffuse_color = v3f(light_color.x*0.5,light_color.y*0.5,light_color.z*0.5);
   V3f ambient_color = v3f(light_color.x*0.1,light_color.y*0.1,light_color.z*0.1);
-  shader_use(shader);
-  shader_set_v3f(shader, "dir_light.ambient", ambient_color);
-  shader_set_v3f(shader, "dir_light.diffuse", diffuse_color);
-  shader_set_v3f(shader, "dir_light.specular", light_color);
-  shader_set_v3f(shader, "dir_light.direction", v3f(-0.2,-1.0,-0.3));
-  shader_set_float(shader, "material.shininess", 32.0f);
+  glsb_shader_use(shader);
+  glsb_shader_set_v3f(shader, "dir_light.ambient", ambient_color);
+  glsb_shader_set_v3f(shader, "dir_light.diffuse", diffuse_color);
+  glsb_shader_set_v3f(shader, "dir_light.specular", light_color);
+  glsb_shader_set_v3f(shader, "dir_light.direction", v3f(-0.2,-1.0,-0.3));
+  glsb_shader_set_float(shader, "material.shininess", 32.0f);
 
   float rad = 0;
 
@@ -106,12 +106,12 @@ int main() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     M4f view = camera_view(&g_camera);
-    shader_use(shader);
+    glsb_shader_use(shader);
     M4f model = m4f_id();
     model = m4f_mul(model, m4f_rot_y(rad));
-    shader_set_m4f(shader, "model", model);
-    shader_set_m4f(shader, "view", view);
-    shader_set_m4f(shader, "projection", g_projection);
+    glsb_shader_set_m4f(shader, "model", model);
+    glsb_shader_set_m4f(shader, "view", view);
+    glsb_shader_set_m4f(shader, "projection", g_projection);
     model_draw(&m, shader);
 
     glfwPollEvents();

@@ -49,16 +49,19 @@ struct _Glsb_App {
   M4f projection;
   void* context;
 
-  Glsb_AppSetupFn*         setup;           // required
-  Glsb_AppStartupFn*       startup;         // optional
-  Glsb_AppRenderFn*        render;          // optional
-  Glsb_AppShutdownFn*      shutdown;        // optional
+  Glsb_AppSetupFn*    setup;    // required
+  Glsb_AppStartupFn*  startup;  // optional
+  Glsb_AppRenderFn*   render;   // optional
+  Glsb_AppShutdownFn* shutdown; // optional
 };
 
-Glsb_App* glsb_app_init();
+void glsb_app_init();
 void glsb_app_deinit();
 void glsb_app_run();
-
-void glsb_app_setup_default(Glsb_App* app);
+void glsb_app_set_context(void* context);
+void glsb_app_setup(Glsb_AppSetupFn* fn);
+void glsb_app_startup(Glsb_AppStartupFn* fn);
+void glsb_app_render(Glsb_AppRenderFn* fn);
+void glsb_app_shutdown(Glsb_AppShutdownFn* fn);
 
 #endif // INCLUDE_APPLICATION_H

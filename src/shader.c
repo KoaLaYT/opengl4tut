@@ -5,13 +5,14 @@
 #include <sys/stat.h>
 
 #include "shader.h"
+#include "model.h"
 #include "tut.h"
 
 #define SHADER_LOG_SIZE 2048
 
 static const char* tut_read_entire_file(const char* path);
 
-Shader shader_init(const char *vs_path, const char *fs_path) {
+Glsb_Shader glsb_shader_init(const char *vs_path, const char *fs_path) {
   int len = 0;
   char log[SHADER_LOG_SIZE];
 
@@ -57,29 +58,37 @@ Shader shader_init(const char *vs_path, const char *fs_path) {
     exit(1);
   }
 
-  return (Shader){ .id = id };
+  glDeleteShader(vs);
+  glDeleteShader(fs);
+
+  return (Glsb_Shader){ .id = id };
 }
 
-void shader_use(Shader s) {
+void glsb_shader_deinit(Glsb_Shader s) {
+  glUseProgram(0);
+  glDeleteProgram(s.id);
+}
+
+void glsb_shader_use(Glsb_Shader s) {
   glUseProgram(s.id);
 }
 
-void shader_set_int(Shader s, const char* name, int value) {
+void glsb_shader_set_int(Glsb_Shader s, const char* name, int value) {
   int loc = glGetUniformLocation(s.id, name);
   glUniform1i(loc, value);
 }
 
-void shader_set_float(Shader s, const char* name, float value) {
+void glsb_shader_set_float(Glsb_Shader s, const char* name, float value) {
   int loc = glGetUniformLocation(s.id, name);
   glUniform1f(loc, value);
 }
 
-void shader_set_v3f(Shader s, const char* name, V3f value) {
+void glsb_shader_set_v3f(Glsb_Shader s, const char* name, V3f value) {
   int loc = glGetUniformLocation(s.id, name);
   glUniform3fv(loc, 1, value.a);
 }
 
-void shader_set_m4f(Shader s, const char* name, M4f value) {
+void glsb_shader_set_m4f(Glsb_Shader s, const char* name, M4f value) {
   int loc = glGetUniformLocation(s.id, name);
   glUniformMatrix4fv(loc, 1, GL_FALSE, value.a);
 }
