@@ -11,7 +11,7 @@ typedef struct {
   GLuint vao;
 } Context;
 
-void startup(Glsb_App* app) {
+static void startup(Glsb_App* app) {
   Context* ctx = app->context;
 
   ctx->shader = glsb_shader_init("glsl/hello.vert", "glsl/hello.frag");
@@ -19,7 +19,7 @@ void startup(Glsb_App* app) {
   glBindVertexArray(ctx->vao);
 }
 
-void render(Glsb_App* app, double current_time) {
+static void render(Glsb_App* app, double current_time) {
   Context* ctx = app->context;
 
   GLfloat color[] = { cos(current_time) * 0.5f + 0.5f, 
@@ -34,7 +34,7 @@ void render(Glsb_App* app, double current_time) {
   glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
-void shutdown(Glsb_App* app) {
+static void shutdown(Glsb_App* app) {
   Context* ctx = app->context;
 
   glsb_shader_deinit(ctx->shader);
