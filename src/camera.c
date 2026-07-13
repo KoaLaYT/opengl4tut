@@ -1,5 +1,9 @@
-#include "camera.h"
 #include <math.h>
+
+#include "camera.h"
+
+#define MOUSE_SENSITIVITY 0.05
+#define MOVE_SPEED        6
 
 Camera camera_init(V3f at) {
   Camera c = {0};
@@ -21,6 +25,49 @@ M4f camera_view(Camera* c) {
     c->need_update = false;
   }
   return c->cached_view;
+}
+
+void camera_update(Camera* c, const Glsb_Input* input, double elapsed_secs) {
+  static bool first_mouse = true;
+  static float last_xpos = 0;
+  static float last_ypos = 0;
+
+  if (input->keys[GLFW_KEY_W]) {
+    camera_forward(c, +MOVE_SPEED*elapsed_secs);
+  }
+  if (input->keys[GLFW_KEY_S]) {
+    camera_forward(c, -MOVE_SPEED*elapsed_secs);
+  }
+  if (input->keys[GLFW_KEY_A]) {
+    camera_right(c, -MOVE_SPEED*elapsed_secs);
+  }
+  if (input->keys[GLFW_KEY_D]) {
+    camera_right(c, +MOVE_SPEED*elapsed_secs);
+  }
+  if (input->keys[GLFW_KEY_UP]) {
+    camera_up(c, +MOVE_SPEED*elapsed_secs);
+  }
+  if (input->keys[GLFW_KEY_DOWN]) {
+    camera_up(c, -MOVE_SPEED*elapsed_secs);
+  }
+
+  if (input->mouse_buttons[GLFW_MOUSE_BUTTON_RIGHT]) {
+    double xpos = input->mouse_x;
+    double ypos = input->mouse_y;
+    if (first_mouse) {
+      last_xpos = xpos;
+      last_ypos = ypos;
+      first_mouse = false;
+    }
+    double dx = xpos - last_xpos;
+    double dy = ypos - last_ypos;
+    last_xpos = xpos;
+    last_ypos = ypos;
+    camera_yaw(c, -dx*MOUSE_SENSITIVITY);
+    camera_pitch(c, -dy*MOUSE_SENSITIVITY);
+  } else {
+    first_mouse = true;
+  }
 }
 
 void camera_yaw(Camera* c, float deg) {

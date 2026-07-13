@@ -4,15 +4,17 @@ ifeq ($(PLATFORM),Linux)
   CC = gcc
   LIBS = $(shell pkg-config --libs glfw3) \
 				 -lm \
-				 -Wl,-rpath,'$$ORIGIN' -L./thirdparty/assimp -lassimp
+				 -Wl,-rpath,'$$ORIGIN/../lib' -L./thirdparty/assimp -lassimp
 else ifeq ($(PLATFORM),Darwin)
   CC = clang
   LIBS = -L./thirdparty/glfw-3.4.bin.MACOS/lib-arm64 -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit \
 				 -lm \
-				 -Wl,-rpath,@loader_path -L./thirdparty/assimp -lassimp
+				 -Wl,-rpath,@loader_path/../lib -L./thirdparty/assimp -lassimp
 endif
-SOURCES = $(wildcard src/*.c)
-OBJECTS = $(patsubst src/%.c,build/obj/%.o,$(SOURCES))
+APP_SRCS = $(wildcard app/*.c)
+APPS     = $(patsubst app/%.c,build/bin/%,$(APP_SRCS))
+SOURCES  = $(wildcard src/*.c)
+OBJECTS  = $(patsubst src/%.c,build/obj/%.o,$(SOURCES))
 THIRDPARTIES = build/obj/glad.o build/obj/stb_image.o
 ifeq ($(PLATFORM),Linux)
   INCLUDES = -I./src \
@@ -29,33 +31,20 @@ endif
 
 $(info SOURCES = $(SOURCES))
 $(info OBJECTS = $(OBJECTS))
+$(info APPS    = $(APPS))
 
 .PHONY: all
-all: build/main build/tex build/model
-
-.PHONY: run/main
-run/main: build/main
-	./build/main
-
-.PHONY: run/tex
-run/tex: build/tex
-	./build/tex
-
-.PHONY: run/model
-run/model: build/model
-	./build/model
+all: $(APPS)
 
 .PHONY: clean
 clean:
 	rm -rf build/*
 
-build/main: cmd/main.c $(OBJECTS) $(THIRDPARTIES) | prepare
-	$(CC) $(CFLAGS) -o $@ $^ $(INCLUDES) $(LIBS)
+.PHONY: run/%
+run/%: build/bin/%
+	./build/bin/$*
 
-build/tex: cmd/tex.c $(OBJECTS) $(THIRDPARTIES) | prepare
-	$(CC) $(CFLAGS) -o $@ $^ $(INCLUDES) $(LIBS)
-
-build/model: cmd/model.c $(OBJECTS) $(THIRDPARTIES) | prepare
+build/bin/%: app/%.c $(OBJECTS) $(THIRDPARTIES) | prepare
 	$(CC) $(CFLAGS) -o $@ $^ $(INCLUDES) $(LIBS)
 
 build/obj/%.o: src/%.c | prepare
@@ -77,8 +66,8 @@ build/obj/stb_image.o: thirdparty/stb/stb_image.c | prepare
 
 .PHONY: prepare
 prepare:
-	mkdir -p build/obj
-	cp -a thirdparty/assimp/libassimp.* build
+	mkdir -p build/{obj,bin,lib}
+	cp -a thirdparty/assimp/libassimp.* build/lib
 
 .PHONY: lsp
 lsp: clean

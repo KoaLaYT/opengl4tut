@@ -1,8 +1,10 @@
 #ifndef INCLUDE_CAMERA_H
 #define INCLUDE_CAMERA_H
 
-#include "la.h"
 #include <stdbool.h>
+
+#include "app.h"
+#include "la.h"
 
 typedef struct {
   V3f pos;
@@ -13,6 +15,7 @@ typedef struct {
 
 Camera camera_init(V3f at);
 M4f camera_view(Camera* c);
+void camera_update(Camera* c, const Glsb_Input* input, double elapsed_secs);
 void camera_yaw(Camera* c, float deg);
 void camera_pitch(Camera* c, float deg);
 void camera_forward(Camera* c, float d);
