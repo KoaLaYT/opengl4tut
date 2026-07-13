@@ -66,7 +66,7 @@ build/obj/stb_image.o: thirdparty/stb/stb_image.c | prepare
 
 .PHONY: prepare
 prepare:
-	mkdir -p build/{obj,bin,lib}
+	mkdir -p build/obj build/bin build/lib
 	cp -a thirdparty/assimp/libassimp.* build/lib
 
 .PHONY: lsp
