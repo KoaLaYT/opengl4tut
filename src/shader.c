@@ -11,50 +11,24 @@
 #define SHADER_LOG_SIZE 2048
 
 static const char* tut_read_entire_file(const char* path);
+static GLuint compile_shader(GLenum type, const char* path);
 
 Glsb_Shader glsb_shader_init(const char *vs_path, const char *fs_path) {
-  int len = 0;
-  char log[SHADER_LOG_SIZE];
-
-  const char* vertex_shader = tut_read_entire_file(vs_path);
-  GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vs, 1, &vertex_shader, NULL);
-  glCompileShader(vs);
-  free((void*)vertex_shader);
-
-  int params = -1;
-  glGetShaderiv(vs, GL_COMPILE_STATUS, &params);
-  if (GL_TRUE != params) {
-    tut_log_err("GL shader index %i did not compile\n", vs);
-    glGetShaderInfoLog(vs, SHADER_LOG_SIZE, &len, log);
-    tut_log_debug("Shader info log for GL index %u: %.*s\n", vs, len, log);
-    exit(1);
-  }
-
-  const char* fragment_shader = tut_read_entire_file(fs_path);
-  GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fs, 1, &fragment_shader, NULL);
-  glCompileShader(fs);
-  free((void*)fragment_shader);
-
-  glGetShaderiv(fs, GL_COMPILE_STATUS, &params);
-  if (GL_TRUE != params) {
-    tut_log_err("GL shader index %i did not compile\n", fs);
-    glGetShaderInfoLog(fs, SHADER_LOG_SIZE, &len, log);
-    tut_log_debug("Shader info log for GL index %u: %.*s\n", fs, len, log);
-    exit(1);
-  }
+  GLuint vs = compile_shader(GL_VERTEX_SHADER, vs_path);
+  GLuint fs = compile_shader(GL_FRAGMENT_SHADER, fs_path);
 
   GLuint id = glCreateProgram();
   glAttachShader(id, vs);
   glAttachShader(id, fs);
   glLinkProgram(id);
 
-  glGetProgramiv(id, GL_LINK_STATUS, &params);
-  if (GL_TRUE != params) {
-    tut_log_err("could not link shader program %i\n", id);
+  GLint ok = -1;
+  glGetProgramiv(id, GL_LINK_STATUS, &ok);
+  if (GL_TRUE != ok) {
+    int len = 0;
+    char log[SHADER_LOG_SIZE];
     glGetProgramInfoLog(id, SHADER_LOG_SIZE, &len, log);
-    tut_log_debug("Program info log for GL index %u: %.*s\n", id, len, log);
+    tut_log_err("Could not link shader %u, %.*s\n", id, len, log);
     exit(1);
   }
 
@@ -132,4 +106,24 @@ on_error:
   tut_log_err("read_entire_file(%s): %s", path, strerror(errno));
   exit(1);
   return NULL;
+}
+
+static GLuint compile_shader(GLenum type, const char* path) {
+  const char* code = tut_read_entire_file(path);
+  GLuint id = glCreateShader(type);
+  glShaderSource(id, 1, &code, NULL);
+  glCompileShader(id);
+  free((void*)code);
+
+  GLint ok = -1;
+  glGetShaderiv(id, GL_COMPILE_STATUS, &ok);
+  if (GL_TRUE != ok) {
+    int len = 0;
+    char log[SHADER_LOG_SIZE];
+    glGetShaderInfoLog(id, SHADER_LOG_SIZE, &len, log);
+    tut_log_err("Could not compile shader %u (%s), %.*s\n", id, path, len, log);
+    exit(1);
+  }
+
+  return id;
 }
