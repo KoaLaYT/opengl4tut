@@ -231,7 +231,7 @@ static Mesh model_process_mesh(Model* m, struct aiMesh* mesh, const struct aiSce
   }
 
   // process material
-  int textures_len = 0;
+  size_t textures_len = 0;
   Texture* textures = NULL;
   struct aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
   if (material) {
@@ -246,13 +246,19 @@ static Mesh model_process_mesh(Model* m, struct aiMesh* mesh, const struct aiSce
         bool loaded = false;
         Texture tex = model_load_texture(m, material, aiTextureType_DIFFUSE, TextureDiffuse, i, &loaded);
         textures[textures_count++] = tex;
-        if (loaded) m->loaded[m->loaded_len++] = tex;
+        if (loaded) {
+          m->loaded[m->loaded_len++] = tex;
+          assert(m->loaded_len <= MAX_TEXTURE_LEN);
+        }
       }
       for (unsigned int i = 0; i < specular_len; i++) {
         bool loaded = false;
         Texture tex = model_load_texture(m, material, aiTextureType_SPECULAR, TextureSpecular, i, &loaded);
         textures[textures_count++] = tex;
-        if (loaded) m->loaded[m->loaded_len++] = tex;
+        if (loaded) {
+          m->loaded[m->loaded_len++] = tex;
+          assert(m->loaded_len <= MAX_TEXTURE_LEN);
+        }
       }
     }
   }

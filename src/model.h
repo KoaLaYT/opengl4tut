@@ -45,7 +45,7 @@ typedef struct {
   Mesh* meshes;
   size_t meshes_len;
   char* directory;
-
+  // TODO: replace with da
   Texture loaded[MAX_TEXTURE_LEN];
   size_t loaded_len;
 } Model;
