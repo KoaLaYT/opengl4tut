@@ -1,8 +1,8 @@
-#include <glad/gl.h>
-#include <GLFW/glfw3.h>
-
 #include <math.h>
 #include <stdio.h>
+
+#include <glad/gl.h>
+#include <GLFW/glfw3.h>
 
 #include "tut.h"
 #include "la.h"

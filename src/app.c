@@ -15,10 +15,19 @@
 static void glsb_app_setup_default(Glsb_App* app);
 static void glfw_on_window_resize(GLFWwindow* window, int w, int h);
 static void glfw_on_framebuffer_resize(GLFWwindow* window, int w, int h);
-static void glfw_on_key(GLFWwindow* window, int key, int scancode, int action, int mods);
-static void glfw_on_mouse_button(GLFWwindow* window, int button, int action, int mods);
+static void glfw_on_key(GLFWwindow* window,
+                        int key,
+                        int scancode,
+                        int action,
+                        int mods);
+static void glfw_on_mouse_button(GLFWwindow* window,
+                                 int button,
+                                 int action,
+                                 int mods);
 static void glfw_on_mouse_move(GLFWwindow* window, double x, double y);
-static void glfw_on_mouse_wheel(GLFWwindow* window, double xoffset, double yoffset);
+static void glfw_on_mouse_wheel(GLFWwindow* window,
+                                double xoffset,
+                                double yoffset);
 
 static void update_fps_counter(Glsb_App* app, double curr_secs);
 static M4f update_projection_matrix(int w, int h);
@@ -66,7 +75,9 @@ void glsb_app_run() {
   g_app->window = glfwCreateWindow(g_app->info.window_width,
                                    g_app->info.window_height,
                                    "glsb",
-                                   g_app->info.flags.fullscreen ? glfwGetPrimaryMonitor() : NULL,
+                                   g_app->info.flags.fullscreen
+                                     ? glfwGetPrimaryMonitor()
+                                     : NULL,
                                    NULL);
   if (!g_app->window) {
     fprintf(stderr, "Failed to open window\n");
@@ -180,7 +191,12 @@ static void glfw_on_window_resize(GLFWwindow* window, int w, int h) {
   g_app->info.window_height = h;
 }
 
-static void glfw_on_key(GLFWwindow* window, int key, int scancode, int action, int mods) {
+static void glfw_on_key(GLFWwindow* window,
+                        int key,
+                        int scancode,
+                        int action,
+                        int mods)
+{
   UNUSED(window); UNUSED(scancode); UNUSED(mods);
   if (key == GLFW_KEY_UNKNOWN) return;
   if (action == GLFW_PRESS) {
@@ -190,7 +206,11 @@ static void glfw_on_key(GLFWwindow* window, int key, int scancode, int action, i
   }
 }
 
-static void glfw_on_mouse_button(GLFWwindow* window, int button, int action, int mods) {
+static void glfw_on_mouse_button(GLFWwindow* window,
+                                 int button,
+                                 int action,
+                                 int mods)
+{
   UNUSED(window); UNUSED(mods);
   if (action == GLFW_PRESS) {
     g_app->input.mouse_buttons[button] = true;
@@ -207,7 +227,10 @@ static void glfw_on_mouse_move(GLFWwindow* window, double x, double y) {
   g_app->input.mouse_y  = y;
 }
 
-static void glfw_on_mouse_wheel(GLFWwindow* window, double xoffset, double yoffset) {
+static void glfw_on_mouse_wheel(GLFWwindow* window,
+                                double xoffset,
+                                double yoffset)
+{
   UNUSED(window); UNUSED(xoffset);
   g_app->input.scroll_dy += yoffset;
 }

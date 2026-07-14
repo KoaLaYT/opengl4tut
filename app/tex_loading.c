@@ -24,12 +24,12 @@ static void startup(Glsb_App* app) {
 
   GLfloat data[] = {
     // vertice x, y  texture s, t
-      -1.0f,  1.0f,   0.0f, 1.0f,
-      -1.0f, -1.0f,   0.0f, 0.0f,
-       1.0f, -1.0f,   1.0f, 0.0f,
-       1.0f, -1.0f,   1.0f, 0.0f,
-       1.0f,  1.0f,   1.0f, 1.0f,
-      -1.0f,  1.0f,   0.0f, 1.0f,
+    -1.0f,  1.0f,    0.0f, 1.0f,
+    -1.0f, -1.0f,    0.0f, 0.0f,
+     1.0f, -1.0f,    1.0f, 0.0f,
+     1.0f, -1.0f,    1.0f, 0.0f,
+     1.0f,  1.0f,    1.0f, 1.0f,
+    -1.0f,  1.0f,    0.0f, 1.0f,
   };
 
   GLuint vbo = 0;
@@ -41,7 +41,8 @@ static void startup(Glsb_App* app) {
   glBindVertexArray(ctx->vao);
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), NULL);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)(2*sizeof(float)));
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float),
+                                                  (void*)(2*sizeof(float)));
   glEnableVertexAttribArray(1);
 }
 

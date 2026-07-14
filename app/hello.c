@@ -1,8 +1,8 @@
 #include <assert.h>
 #include <math.h>
+#include <stdio.h>
 
 #include <glad/gl.h>
-#include <stdio.h>
 
 #include "app.h"
 #include "shader.h"
@@ -27,9 +27,9 @@ static void startup(Glsb_App* app) {
 static void render(Glsb_App* app, double current_time) {
   Context* ctx = app->context;
 
-  GLfloat bg_color[] = { cos(current_time) * 0.5f + 0.5f, 
+  GLfloat bg_color[] = { cos(current_time) * 0.5f + 0.5f,
                          sin(current_time) * 0.5f + 0.5f, 0.0f, 1.0f };
-  GLfloat fg_color[] = { sin(current_time) * 0.5f + 0.5f, 
+  GLfloat fg_color[] = { sin(current_time) * 0.5f + 0.5f,
                          cos(current_time) * 0.5f + 0.5f, 0.0f, 1.0f };
   glClearBufferfv(GL_COLOR, 0, bg_color);
 
