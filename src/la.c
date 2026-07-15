@@ -1,4 +1,6 @@
+#include <assert.h>
 #include <math.h>
+#include <stddef.h>
 
 #include "la.h"
 
@@ -63,7 +65,7 @@ M4f m4f_id() {
   return m;
 }
 
-M4f m4f_mul(M4f a, M4f b) {
+M4f m4f_mul2(M4f a, M4f b) {
   M4f m = {0};
 
   m._11 = a._11*b._11 + a._21*b._12 + a._31*b._13 + a._41*b._14;
@@ -89,20 +91,29 @@ M4f m4f_mul(M4f a, M4f b) {
   return m;
 }
 
-M4f m4f_translate(M4f m, V3f v) {
+M4f m4f_mul_count(M4f* a, size_t n) {
+  assert(n >= 2);
+  M4f m = a[0];
+  for (size_t i = 1; i < n; i++) {
+    m = m4f_mul2(m, a[i]);
+  }
+  return m;
+}
+
+M4f m4f_translate(V3f v) {
   M4f t = m4f_id();
   t._41 = v.x;
   t._42 = v.y;
   t._43 = v.z;
-  return m4f_mul(m, t);
+  return t;
 }
 
-M4f m4f_scale(M4f m, float v) {
+M4f m4f_scale(float v) {
   M4f s = m4f_id();
   s._11 = v;
   s._22 = v;
   s._33 = v;
-  return m4f_mul(m, s);
+  return s;
 }
 
 M4f m4f_rot_x(float rad) {

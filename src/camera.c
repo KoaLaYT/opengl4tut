@@ -19,7 +19,7 @@ M4f camera_view(Camera* c) {
     Quat q = quat_mul(yaw, pitch);
     Quat q_inv = quat_conjugate(q);
 
-    M4f t = m4f_translate(m4f_id(), v3f_neg(c->pos));
+    M4f t = m4f_translate(v3f_neg(c->pos));
     M4f r = quat_to_m4f(q_inv);
     c->cached_view = m4f_mul(r, t);
     c->need_update = false;

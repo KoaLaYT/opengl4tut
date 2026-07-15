@@ -108,7 +108,7 @@ int main() {
     M4f view = camera_view(&g_camera);
     glsb_shader_use(shader);
     M4f model = m4f_id();
-    model = m4f_mul(model, m4f_rot_y(rad));
+    model = m4f_mul2(model, m4f_rot_y(rad));
     glsb_shader_set_m4f(shader, "model", model);
     glsb_shader_set_m4f(shader, "view", view);
     glsb_shader_set_m4f(shader, "projection", g_projection);

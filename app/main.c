@@ -237,11 +237,11 @@ int main(void) {
     {
       glsb_shader_use(cube_shader);
       for (int i = 0; i < 10; i++) {
-        M4f model = m4f_id();
-        model = m4f_translate(model, cube_positions[i]);
-        model = m4f_mul(model, m4f_rot_x(DEG_TO_RAD(20.0*i)));
-        model = m4f_mul(model, m4f_rot_y(DEG_TO_RAD(20.0*i)));
-        model = m4f_mul(model, m4f_rot_z(DEG_TO_RAD(20.0*i)));
+        M4f t = m4f_translate(cube_positions[i]);
+        M4f rx = m4f_rot_x(DEG_TO_RAD(20.0*i));
+        M4f ry = m4f_rot_y(DEG_TO_RAD(20.0*i));
+        M4f rz = m4f_rot_z(DEG_TO_RAD(20.0*i));
+        M4f model = m4f_mul(t, rx, ry, rz);
         glsb_shader_set_m4f(cube_shader, "model", model);
         glsb_shader_set_m4f(cube_shader, "view", view);
         glsb_shader_set_m4f(cube_shader, "projection", g_projection);
@@ -256,9 +256,9 @@ int main(void) {
     {
       glsb_shader_use(light_shader);
       for (int i = 0; i < 4; i++) {
-        M4f model = m4f_id();
-        model = m4f_translate(model, point_light_positions[i]);
-        model = m4f_scale(model, 0.2);
+        M4f t = m4f_translate(point_light_positions[i]);
+        M4f s = m4f_scale(0.2);
+        M4f model = m4f_mul(t, s);
         glsb_shader_set_v3f(light_shader, "light_color", light_color);
         glsb_shader_set_m4f(light_shader, "model", model);
         glsb_shader_set_m4f(light_shader, "view", view);

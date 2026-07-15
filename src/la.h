@@ -1,6 +1,8 @@
 #ifndef INCLUDE_LA_H
 #define INCLUDE_LA_H
 
+#include <stddef.h>
+
 #define PI 3.14159f
 #define DEG_TO_RAD(deg) (deg*PI/180.0f)
 
@@ -55,9 +57,12 @@ V3f m3f_mul_vec(M3f m, V3f v);
 M3f m3f_rot_y(float rad);
 
 M4f m4f_id();
-M4f m4f_mul(M4f a, M4f b);
-M4f m4f_translate(M4f m, V3f v);
-M4f m4f_scale(M4f m, float s);
+M4f m4f_mul2(M4f a, M4f b);
+M4f m4f_mul_count(M4f* a, size_t n);
+#define m4f_mul(...) \
+  m4f_mul_count((M4f[]){__VA_ARGS__}, sizeof((M4f[]){__VA_ARGS__})/sizeof(M4f))
+M4f m4f_translate(V3f v);
+M4f m4f_scale(float s);
 M4f m4f_rot_x(float rad);
 M4f m4f_rot_y(float rad);
 M4f m4f_rot_z(float rad);
