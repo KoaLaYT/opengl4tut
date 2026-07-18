@@ -1,33 +1,17 @@
-PLATFORM = $(shell uname -s)
 CFLAGS = -Wall -Wextra -g -O2 -std=c11
-ifeq ($(PLATFORM),Linux)
-  CC = gcc
-  LIBS = $(shell pkg-config --libs glfw3) \
-				 -lm \
-				 -Wl,-rpath,'$$ORIGIN/../lib' -L./thirdparty/assimp -lassimp
-else ifeq ($(PLATFORM),Darwin)
-  CC = clang
-  LIBS = -L./thirdparty/glfw-3.4.bin.MACOS/lib-arm64 -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit \
-				 -lm \
-				 -Wl,-rpath,@loader_path/../lib -L./thirdparty/assimp -lassimp
-endif
+CC = gcc
+LIBS = $(shell pkg-config --libs glfw3) \
+			 -lm \
+			 -Wl,-rpath,'$$ORIGIN/../lib' -L./thirdparty/assimp -lassimp
 APP_SRCS = $(wildcard app/*.c)
 APPS     = $(patsubst app/%.c,build/bin/%,$(APP_SRCS))
 SOURCES  = $(wildcard src/*.c)
 OBJECTS  = $(patsubst src/%.c,build/obj/%.o,$(SOURCES))
 THIRDPARTIES = build/obj/glad.o build/obj/stb_image.o
-ifeq ($(PLATFORM),Linux)
-  INCLUDES = -I./src \
-						 -I./thirdparty/glad/include \
-						 -I./thirdparty/stb \
-						 -I./thirdparty/assimp/include
-else ifeq ($(PLATFORM),Darwin)
-  INCLUDES = -I./src \
-						 -I./thirdparty/glad/include \
-						 -I./thirdparty/stb \
-						 -I./thirdparty/assimp/include \
-						 -I./thirdparty/glfw-3.4.bin.MACOS/include
-endif
+INCLUDES = -I./src \
+					 -I./thirdparty/glad/include \
+					 -I./thirdparty/stb \
+					 -I./thirdparty/assimp/include
 
 $(info SOURCES = $(SOURCES))
 $(info OBJECTS = $(OBJECTS))

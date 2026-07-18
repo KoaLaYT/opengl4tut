@@ -42,12 +42,6 @@ int main() {
   }
 
   glfwWindowHint(GLFW_SAMPLES, 4); // anti-aliasing
-#if __APPLE__
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#endif
   GLFWwindow* window = glfwCreateWindow(g_win_width, g_win_height, "", NULL, NULL);
   if (!window) {
     tut_log_err("could not open window with GLFW3\n");
@@ -68,20 +62,7 @@ int main() {
   // glCullFace(GL_BACK);     // cull back face
   // glFrontFace(GL_CW);      // clock-wise
 
-#if __APPLE__
-  {
-    int fb_width, fb_height;
-    glfwGetFramebufferSize(window, &fb_width, &fb_height);
-    glViewport(0, 0, fb_width, fb_height);
-    update_projection_matrix(fb_width, fb_height);
-  }
-#endif
-
-#if __APPLE__
-  const char* model_path = "/Users/koalayt/Downloads/backpack/backpack.obj";
-#else
   const char* model_path = "/home/koalayt/Downloads/backpack/backpack.obj";
-#endif
   Model m = model_init(model_path);
   Glsb_Shader shader  = glsb_shader_init("glsl/model.vert", "glsl/model.frag");
   g_camera = camera_init(v3f(0,0,4));

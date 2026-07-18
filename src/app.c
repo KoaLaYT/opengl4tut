@@ -166,13 +166,8 @@ void glsb_app_shutdown(Glsb_AppShutdownFn* fn) {
 static void glsb_app_setup_default(Glsb_App* app) {
   app->info.window_width  = 800;
   app->info.window_height = 600;
-#if __APPLE__
-  app->info.major_version = 4;
-  app->info.minor_version = 1;
-#else
   app->info.major_version = 4;
   app->info.minor_version = 6;
-#endif
   app->info.samples = 0;
   app->info.flags.all = 0;
   app->info.flags.cursor = 1;
